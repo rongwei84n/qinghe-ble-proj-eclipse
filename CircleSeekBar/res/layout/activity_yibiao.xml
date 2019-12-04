@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#212121">
+        <include
+            layout="@layout/include_common_header" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp">
+             <TextView
+                android:id="@+id/tv_temperature"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50    C"
+                android:textColor="@color/white"/>
+            <TextView
+                android:id="@+id/tv_rs"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/tv_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1000    r/s"
+                android:textColor="@color/white"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp">
+            <TextView
+                android:id="@+id/tv_v"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12    v"
+                android:textColor="@color/white"/>
+            <TextView
+                android:id="@+id/tv_lh"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/tv_v"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1000    L/H"
+                android:textColor="@color/white"/>
+        </RelativeLayout>
+
+        <com.example.views.DashboardView
+            android:id="@+id/dbv_licheng"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            app:bigSliceCount="12"
+            app:headerRadius="50dp"
+            app:headerTitle="km/h"
+            app:maxValue="50"
+            app:measureTextSize="10sp"
+            app:radius="110dp"
+            app:sliceCountInOneBigSlice="2"
+            app:realTimeValue="19"
+            app:startAngle="170"
+            app:stripeMode="inner"
+            app:stripeWidth="40dp"
+            app:sweepAngle="200"/>
+
+        <com.example.views.DashboardView
+            android:id="@+id/dbv_zhuansu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            app:bigSliceCount="12"
+            app:headerRadius="50dp"
+            app:headerTitle="km/h"
+            app:maxValue="240"
+            app:measureTextSize="10sp"
+            app:radius="110dp"
+            app:sliceCountInOneBigSlice="2"
+            app:realTimeValue="80"
+            app:startAngle="170"
+            app:stripeMode="inner"
+            app:stripeWidth="40dp"
+            app:sweepAngle="200"/>
+
+    <!--    <com.example.views.CicleView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        app:circle_color="blue"-->
+    <!--        android:visibility="gone"/>-->
+    <!--    <com.example.views.MeterView-->
+    <!--        android:layout_width="200dp"-->
+    <!--        android:layout_height="200dp"-->
+    <!--        android:visibility="gone"/>-->
+
+    <!--    <ScrollView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content">-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:orientation="vertical">-->
+
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="200dp"-->
+    <!--                android:background="#88888888"-->
+    <!--                android:gravity="center"-->
+    <!--                android:text="数据显示区1" />-->
+
+    <!--            <com.github.mikephil.charting.charts.PieChart-->
+    <!--                android:id="@+id/pie_chart"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="300dp" />-->
+
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="200dp"-->
+    <!--                android:background="#88888888"-->
+    <!--                android:gravity="center"-->
+    <!--                android:text="数据显示区2" />-->
+    <!--        </LinearLayout>-->
+    <!--    </ScrollView>-->
+
+    </LinearLayout>
+</ScrollView>

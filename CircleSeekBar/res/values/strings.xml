@@ -34,10 +34,16 @@
       
     <string name="menu_save">保存</string>
     
-        <string name="net_desc">YOBO为你解决以下问题：想听歌不知道听什么,工作忙没空听歌,对着搜索引擎不知道听什么歌</string>
+    <string name="net_desc">YOBO为你解决以下问题：想听歌不知道听什么,工作忙没空听歌,对着搜索引擎不知道听什么歌</string>
     <string name="helps_yobo">Yobo是中国最有特色的在线音乐服务提供商，其结合Last.fm和Pandora的特点，按照中国用户的习惯，加入诸多新的元素，使得其成为	众多音乐爱好者离不开的网站.
-</string>
-   <string name="helps_text">本软件是使用YoboAPI专为Android手机用户开发的客户端，使得其可以在手机上随时随地的收听你在Yobo上音乐盒、电台或者Yobo系统的一些榜单；更多功能，不断开发中.
-</string>
+	</string>
+   	<string name="helps_text">本软件是使用YoboAPI专为Android手机用户开发的客户端，使得其可以在手机上随时随地的收听你在Yobo上音乐盒、电台或者Yobo系统的一些榜单；更多功能，不断开发中.
+	</string>
+	
+   	<string name="cancel">取消</string>
+    <string name="loading_text">加载中...</string>
+    <string name="offline">不在线</string>
+    <string name="welcome_custom1">致力为顾客提供最卓越的产品和服务</string>
+   	
 
 </resources>

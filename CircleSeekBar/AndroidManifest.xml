@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lee.circleseekbar"
     android:versionCode="2"
-    android:versionName="2.0" >
+    android:versionName="2.1" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -12,19 +12,21 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
      
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>  
-		<uses-permission android:name="android.permission.INTERNET"/>  
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>  
+	<uses-permission android:name="android.permission.INTERNET"/>  
+		
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name="com.example.BleApplication">
         <activity
-            android:name="com.example.main.DeviceScanActivity"
-            android:label="@string/app_name" 
-            android:theme="@android:style/Theme.DeviceDefault.Light"  
-            >
+            android:name="com.example.activity.SplashActivity"
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,6 +44,22 @@
               android:label="请选择你的颜色"  
               android:theme="@android:style/Theme.Dialog"  
         ></activity>  
+        
+        <activity android:name="com.example.main.DeviceScanActivity"
+            android:theme="@android:style/Theme.DeviceDefault.Light"/>
+        
+        <activity android:name="com.example.activity.PageHomeActivity"/>
+        <activity android:name="com.example.activity.AddDeviceActivity"/>
+        <activity android:name="com.example.activity.status.OBDHomeActivity"/>
+
+        <activity android:name="com.example.activity.JdyBaseActivity"/>
+
+        <activity android:name="com.example.activity.status.OBDReadErrorActivity"/>
+        <activity android:name="com.example.activity.status.OBDClearErrorActivity"/>
+        <activity android:name="com.example.activity.status.OBDRealDataActivity"/>
+        <activity android:name="com.example.activity.status.OBDFrezenDataActivity"/>
+        <activity android:name="com.example.activity.status.OBDCarInfoActivity"/>
+        <activity android:name="com.example.activity.status.OBDYiBiaoActivity"/>
                 
         
         <activity android:name="com.lee.circleseekbar.PlayMusicActivity" android:screenOrientation="portrait"></activity>
