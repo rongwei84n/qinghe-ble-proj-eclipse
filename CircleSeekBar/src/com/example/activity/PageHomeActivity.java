@@ -43,6 +43,7 @@ public class PageHomeActivity extends JdyBaseActivity {
 
     @Override
     protected void onMessageReceive(String msg) {
+    	super.onMessageReceive(msg);
         if (TextUtils.isEmpty(msg)){
             return;
         }

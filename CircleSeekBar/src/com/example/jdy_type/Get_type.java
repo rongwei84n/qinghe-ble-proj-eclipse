@@ -1,6 +1,6 @@
 package com.example.jdy_type;
 
-import android.util.Log;
+import com.example.utils.LogUtils;
 
 public class Get_type {
 
@@ -12,11 +12,11 @@ public class Get_type {
 	public String ibeacon_MAJOR = "";
 	public String ibeacon_MINOR = "";
 	
-	public byte sensor_temp;//´«¸ÐÆ÷ÎÂ¶ÈÖµÊ®Áù½øÖÆ¸ñÊ½-----1byte
-	public byte sensor_humid;//´«¸ÐÆ÷Êª¶ÈÖµ Ê®Áù½øÖÆ¸ñÊ½-----1byte
+	public byte sensor_temp;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¶ï¿½ÖµÊ®ï¿½ï¿½ï¿½ï¿½ï¿½Æ¸ï¿½Ê½-----1byte
+	public byte sensor_humid;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êªï¿½ï¿½Öµ Ê®ï¿½ï¿½ï¿½ï¿½ï¿½Æ¸ï¿½Ê½-----1byte
 	
-	public byte sensor_batt;//´«¸ÐÆ÷µçÁ¿Ê®Áù½øÖÆ¸ñÊ½-----1byte
-	public byte[] sensor_VID;//´«¸ÐÆ÷³§¼ÒÊ¶±ðÂëÊ®Áù½øÖÆ¸ñÊ½-----2byte
+	public byte sensor_batt;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½Æ¸ï¿½Ê½-----1byte
+	public byte[] sensor_VID;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½Æ¸ï¿½Ê½-----2byte
 	
 	
 	public JDY_type DEV_TYPE ;
@@ -24,18 +24,18 @@ public class Get_type {
 	public JDY_type dv_type( byte[] p )
 	{
 		
-		Log.d( "scan_byte_len",""+ p.length);
+		LogUtils.d( "scan_byte_len",""+ p.length);
 		String str;
 		
 		str = String.format( "%02x", p[5] );
-		Log.d( "scan_byte_bit_0=",""+ str);
+		LogUtils.d( "scan_byte_bit_0=",""+ str);
 		str = String.format( "%02x", p[6] );
-		Log.d( "scan_byte_bit_0=",""+ str);
+		LogUtils.d( "scan_byte_bit_0=",""+ str);
 		
 		str = String.format( "%02x", p[11] );
-		Log.d( "scan_byte_bit_0=",""+ str);
+		LogUtils.d( "scan_byte_bit_0=",""+ str);
 		str = String.format( "%02x", p[12] );
-		Log.d( "scan_byte_bit_0=",""+ str);
+		LogUtils.d( "scan_byte_bit_0=",""+ str);
 		
 		
 		
@@ -43,11 +43,11 @@ public class Get_type {
 		
 		byte m1 = (byte)((p[18]+1)^0x11);
 		str = String.format( "%02x", m1 );
-		Log.d( "scan_byte_bit_0=",""+ str);
+		LogUtils.d( "scan_byte_bit_0=",""+ str);
 		
 		byte m2 = (byte)((p[17]+1)^0x22);
 		str = String.format( "%02x", m2 );
-		Log.d( "scan_byte_bit_0=",""+ str);
+		LogUtils.d( "scan_byte_bit_0=",""+ str);
 		
 		
 		if( p[5]==(byte)0xe0 && p[6]==(byte)0xff &&p[11]==m1&&p[12]==m2 )

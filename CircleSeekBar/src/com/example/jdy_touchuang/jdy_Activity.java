@@ -35,7 +35,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,6 +52,7 @@ import android.widget.ToggleButton;
 
 import com.example.ble.BluetoothLeService;
 import com.example.set.set;
+import com.example.utils.LogUtils;
 import com.lee.circleseekbar.R;
 
 /**
@@ -107,7 +107,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             if (!mBluetoothLeService.initialize()) {
-                Log.e(TAG, "Unable to initialize Bluetooth");
+            	LogUtils.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
             // Automatically connects to the device upon successful start-up initialization.
@@ -158,7 +158,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
                 // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } 
-            else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) //½ÓÊÕFFE1´®¿ÚÍ¸´«Êý¾ÝÍ¨µÀÊý¾Ý
+            else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) //ï¿½ï¿½ï¿½ï¿½FFE1ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             {
                 //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             	//byte data1;
@@ -166,7 +166,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
             	
                 displayData( intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA) );
             } 
-            else if (BluetoothLeService.ACTION_DATA_AVAILABLE1.equals(action)) //½ÓÊÕFFE2¹¦ÄÜÅäÖÃ·µ»ØµÄÊý¾Ý
+            else if (BluetoothLeService.ACTION_DATA_AVAILABLE1.equals(action)) //ï¿½ï¿½ï¿½ï¿½FFE2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
             {
                 displayData1( intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA1) );
             }
@@ -227,9 +227,9 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
     EditText dev_Name;
     Button name_button;
     
-    EditText password_ed;//ÃÜÂëÖµ
-    Button password_enable_bt;//ÃÜÂë¿ª¹Ø
-    Button password_wrt;//ÃÜÂëÐ´ÈëButton
+    EditText password_ed;//ï¿½ï¿½ï¿½ï¿½Öµ
+    Button password_enable_bt;//ï¿½ï¿½ï¿½ë¿ªï¿½ï¿½
+    Button password_wrt;//ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Button
     
     Button adv_time1,adv_time2,adv_time3,adv_time4;
     
@@ -246,8 +246,8 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
     
     TextView tx;
     
-    boolean send_hex = true;//HEX¸ñÊ½·¢ËÍÊý¾Ý  Í¸´«
-    boolean rx_hex = false;//HEX¸ñÊ½½ÓÊÕÊý¾Ý  Í¸´«
+    boolean send_hex = true;//HEXï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  Í¸ï¿½ï¿½
+    boolean rx_hex = false;//HEXï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  Í¸ï¿½ï¿½
     
     void show_view( boolean p )
     {
@@ -285,7 +285,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gatt_services_characteristics);
-        setTitle("Í¸´«");
+        setTitle("Í¸ï¿½ï¿½");
         
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
@@ -304,10 +304,10 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
 
         
         send_button=(Button)findViewById(R.id.tx_button);//send data 1002
-        send_button.setOnClickListener(listener);//ÉèÖÃ¼àÌý  
+        send_button.setOnClickListener(listener);//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
         
         clear_button=(Button)findViewById(R.id.clear_button);//send data 1002
-        clear_button.setOnClickListener(listener);//ÉèÖÃ¼àÌý  
+        clear_button.setOnClickListener(listener);//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
         
         txd_txt=(EditText)findViewById(R.id.tx_text);//1002 data
         txd_txt.setText("0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A");
@@ -321,10 +321,10 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
         key3 = (ToggleButton)findViewById(R.id.toggleButton3);
         key4 = (ToggleButton)findViewById(R.id.toggleButton4);
         
-        key1.setOnClickListener( OnClickListener_listener );//ÉèÖÃ¼àÌý  
-        key2.setOnClickListener( OnClickListener_listener );//ÉèÖÃ¼àÌý  
-        key3.setOnClickListener( OnClickListener_listener );//ÉèÖÃ¼àÌý  
-        key4.setOnClickListener( OnClickListener_listener );//ÉèÖÃ¼àÌý  
+        key1.setOnClickListener( OnClickListener_listener );//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
+        key2.setOnClickListener( OnClickListener_listener );//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
+        key3.setOnClickListener( OnClickListener_listener );//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
+        key4.setOnClickListener( OnClickListener_listener );//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
         
         textView5 = (TextView)findViewById(R.id.textView5);
         tx = (TextView)findViewById(R.id.tx);
@@ -346,13 +346,13 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
                 {  
                 	if( mConnected )
                 	{
-	                	mBluetoothLeService.set_PWM_frequency( 250 );//ÉèÖÃPWMÆµÂÊ
-	                	mBluetoothLeService.Delay_ms(20);//ÑÓÊ±20MS
-	                	mBluetoothLeService.set_PWM_OPEN( 1 );//´ò¿ªPWM
+	                	mBluetoothLeService.set_PWM_frequency( 250 );//ï¿½ï¿½ï¿½ï¿½PWMÆµï¿½ï¿½
+	                	mBluetoothLeService.Delay_ms(20);//ï¿½ï¿½Ê±20MS
+	                	mBluetoothLeService.set_PWM_OPEN( 1 );//ï¿½ï¿½PWM
                 	}
                 } else {  
                 	if( mConnected )
-                		mBluetoothLeService.set_PWM_OPEN( 0 );//¹Ø±ÕPWM
+                		mBluetoothLeService.set_PWM_OPEN( 0 );//ï¿½Ø±ï¿½PWM
                 }  
             }  
         }); 
@@ -370,11 +370,11 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
                 if(isChecked){ 
                 	rx_hex = true;
                 	//rx_data_id_1.setText( mBluetoothLeService.String_to_HexString(sbValues.toString()) );
-                	//Toast.makeText(jdy_Activity.this, "½ÓÊÕÊ®Áù½øÖÆ¸ñÊ½", Toast.LENGTH_SHORT).show();
+                	//Toast.makeText(jdy_Activity.this, "ï¿½ï¿½ï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½Æ¸ï¿½Ê½", Toast.LENGTH_SHORT).show();
                 }else{ 
                 	rx_hex = false;
                 	//rx_data_id_1.setText( sbValues );
-                	//Toast.makeText(jdy_Activity.this, "½ÓÊÕ×Ö·û´®¸ñÊ½", Toast.LENGTH_SHORT).show();
+                	//Toast.makeText(jdy_Activity.this, "ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ê½", Toast.LENGTH_SHORT).show();
                 } 
             } 
         }); 
@@ -392,7 +392,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
         });
         
         
-       // timer.schedule(task, 3000, 3000); // 1sºóÖ´ÐÐtask,¾­¹ý1sÔÙ´ÎÖ´ÐÐ  
+       // timer.schedule(task, 3000, 3000); // 1sï¿½ï¿½Ö´ï¿½ï¿½task,ï¿½ï¿½ï¿½ï¿½1sï¿½Ù´ï¿½Ö´ï¿½ï¿½  
         Message message = new Message();  
         message.what = 1;  
         handler.sendMessage(message);  
@@ -403,12 +403,12 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
         if (mBluetoothLeService != null) {
         	
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-            Log.d(TAG, "Connect request result=" + result);
+            LogUtils.d(TAG, "Connect request result=" + result);
         }
         
         
         boolean sg;
-        getActionBar().setTitle(mDeviceName+"  Í¸´«");
+        getActionBar().setTitle(mDeviceName+"  Í¸ï¿½ï¿½");
         getActionBar().setDisplayHomeAsUpEnabled(true);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         sg = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
@@ -443,28 +443,28 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
         }else password_value = "123456" ;
         
     }
-	//---------------------------------------------------------------------------------Ó¦ÓÃÓÚ´æ´¢Ñ¡ÔñTABµÄÁÐ±íindex
+	//---------------------------------------------------------------------------------Ó¦ï¿½ï¿½ï¿½Ú´æ´¢Ñ¡ï¿½ï¿½TABï¿½ï¿½ï¿½Ð±ï¿½index
 	public String getSharedPreference(String key) 
 	{
-		//Í¬Ñù£¬ÔÚ¶ÁÈ¡SharedPreferencesÊý¾ÝÇ°ÒªÊµÀý»¯³öÒ»¸öSharedPreferences¶ÔÏó 
+		//Í¬ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½È¡SharedPreferencesï¿½ï¿½ï¿½ï¿½Ç°ÒªÊµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½SharedPreferencesï¿½ï¿½ï¿½ï¿½ 
 		SharedPreferences sharedPreferences= getSharedPreferences("test", 
 		Activity.MODE_PRIVATE); 
-		// Ê¹ÓÃgetString·½·¨»ñµÃvalue£¬×¢ÒâµÚ2¸ö²ÎÊýÊÇvalueµÄÄ¬ÈÏÖµ 
+		// Ê¹ï¿½ï¿½getStringï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½valueï¿½ï¿½×¢ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½valueï¿½ï¿½Ä¬ï¿½ï¿½Öµ 
 		String name =sharedPreferences.getString(key, ""); 
 		return name;
 	}
 	public void setSharedPreference(String key, String values) 
 	{
-		//ÊµÀý»¯SharedPreferences¶ÔÏó£¨µÚÒ»²½£© 
+		//Êµï¿½ï¿½ï¿½ï¿½SharedPreferencesï¿½ï¿½ï¿½ó£¨µï¿½Ò»ï¿½ï¿½ï¿½ï¿½ 
 		SharedPreferences mySharedPreferences= getSharedPreferences("test", 
 		Activity.MODE_PRIVATE);
-		//ÊµÀý»¯SharedPreferences.Editor¶ÔÏó£¨µÚ¶þ²½£© 
+		//Êµï¿½ï¿½ï¿½ï¿½SharedPreferences.Editorï¿½ï¿½ï¿½ó£¨µÚ¶ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		SharedPreferences.Editor editor = mySharedPreferences.edit(); 
-		//ÓÃputStringµÄ·½·¨±£´æÊý¾Ý 
+		//ï¿½ï¿½putStringï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		editor.putString(key, values ); 
-		//Ìá½»µ±Ç°Êý¾Ý 
+		//ï¿½á½»ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ 
 		editor.commit(); 
-		//Ê¹ÓÃtoastÐÅÏ¢ÌáÊ¾¿òÌáÊ¾³É¹¦Ð´ÈëÊý¾Ý 
+		//Ê¹ï¿½ï¿½toastï¿½ï¿½Ï¢ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½É¹ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		//Toast.makeText(this, values , 
 		//Toast.LENGTH_LONG).show(); 
 	}
@@ -480,7 +480,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
                 	{
                 		updateConnectionState(R.string.connecting);
                 		final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-                		Log.d(TAG, "Connect request result=" + result);
+                		LogUtils.d(TAG, "Connect request result=" + result);
                 	}
                 }
             }  
@@ -517,7 +517,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
 				 byte[] WriteBytes = new byte[2];
 				 WriteBytes[0] = (byte) 0xE7;
 				 WriteBytes[1] = (byte) 0xf6;
-				 mBluetoothLeService.function_data( WriteBytes );// ·¢ËÍ¶ÁÈ¡ËùÓÐIO×´Ì¬
+				 mBluetoothLeService.function_data( WriteBytes );// ï¿½ï¿½ï¿½Í¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½IO×´Ì¬
         	}
             super.handleMessage(msg);  
         };  
@@ -526,7 +526,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
     	  
         @Override  
         public void run() {  
-            // ÐèÒª×öµÄÊÂ:·¢ËÍÏûÏ¢  
+            // ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢  
             Message message = new Message();  
             message.what = 1;  
             handler.sendMessage(message);  
@@ -540,7 +540,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
 		{
 			if( mConnected )
 			{
-				// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+				// TODO ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ÉµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				byte bit=(byte) 0x00;
 				if( v.getId()==R.id.toggleButton1 )
 				{
@@ -595,25 +595,25 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
     	
     };
     
-    Button.OnClickListener listener = new Button.OnClickListener(){//´´½¨¼àÌý¶ÔÏó    
+    Button.OnClickListener listener = new Button.OnClickListener(){//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    
         public void onClick(View v){    
-            //String strTmp="µã»÷Button02";    
+            //String strTmp="ï¿½ï¿½ï¿½Button02";    
             //Ev1.setText(strTmp);   
         	switch( v.getId())
         	{
-        	case R.id.tx_button ://uuid1002 Êý´«Í¨µÀ·¢ËÍÊý¾Ý
+        	case R.id.tx_button ://uuid1002 ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         		if( connect_status_bit )
       		  {
         		if( mConnected )
         		{
             		String tx_string=txd_txt.getText().toString().trim();
-            		tx_count+=mBluetoothLeService.txxx( tx_string,send_hex );//·¢ËÍ×Ö·û´®Êý¾Ý
-            		tx.setText("·¢ËÍÊý¾Ý£º"+tx_count);
-            		//mBluetoothLeService.txxx( tx_string,false );//·¢ËÍHEXÊý¾Ý
+            		tx_count+=mBluetoothLeService.txxx( tx_string,send_hex );//ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            		tx.setText("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½"+tx_count);
+            		//mBluetoothLeService.txxx( tx_string,false );//ï¿½ï¿½ï¿½ï¿½HEXï¿½ï¿½ï¿½ï¿½
         		}
       		  }else{
       			  //Toast.makeText(this, "Deleted Successfully!", Toast.LENGTH_LONG).show(); 
-      			  Toast toast = Toast.makeText(jdy_Activity.this, "Éè±¸Ã»ÓÐÁ¬½Ó£¡", Toast.LENGTH_SHORT); 
+      			  Toast toast = Toast.makeText(jdy_Activity.this, "ï¿½è±¸Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½", Toast.LENGTH_SHORT); 
       			  toast.show(); 
       		  }
         		break;
@@ -625,7 +625,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
 	    		rx_data_id_1.setText( da );
 	    		mDataField.setText( ""+len_g );
 	    		tx_count = 0;
-	    		tx.setText("·¢ËÍÊý¾Ý£º"+tx_count);
+	    		tx.setText("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½"+tx_count);
         	}break;
         		default :
         			break;
@@ -696,7 +696,7 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
     
 String da="";
 int len_g = 0;
-    private void displayData( byte[] data1 ) //½ÓÊÕFFE1´®¿ÚÍ¸´«Êý¾ÝÍ¨µÀÊý¾Ý
+    private void displayData( byte[] data1 ) //ï¿½ï¿½ï¿½ï¿½FFE1ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
 		//String head1,data_0;
 		/*
@@ -758,12 +758,12 @@ int len_g = 0;
     	}
     	
     }
-    private void displayData1( byte[] data1 ) //½ÓÊÕFFE2¹¦ÄÜÅäÖÃ·µ»ØµÄÊý¾Ý
+    private void displayData1( byte[] data1 ) //ï¿½ï¿½ï¿½ï¿½FFE2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
     {
-    	//String str = mBluetoothLeService.bytesToHexString1( data1 );//½«½ÓÊÕµÄÊ®Áù½øÖÆÊý¾Ý×ª»»³ÉÊ®Áù½øÖÆ×Ö·û´®
+    	//String str = mBluetoothLeService.bytesToHexString1( data1 );//ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
     	
     	
-    	if( data1.length==5&&data1[0]==(byte) 0xf6 )//ÅÐ¶ÏÊÇ·ñÊÇ¶ÁÈ¡IO×´Ì¬Î»
+    	if( data1.length==5&&data1[0]==(byte) 0xf6 )//ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½Ç¶ï¿½È¡IO×´Ì¬Î»
     	{
     		if( data1[1]==(byte) 0x01 )
     		{
@@ -794,11 +794,11 @@ int len_g = 0;
     			key4.setChecked( false );
     		}
     	}
-    	else if( data1.length==2&&data1[0]==(byte) 0x55 )//ÅÐ¶ÏAPPµÄÁ¬½ÓÃÜÂëÊÇ·ñ³É¹¦
+    	else if( data1.length==2&&data1[0]==(byte) 0x55 )//ï¿½Ð¶ï¿½APPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½É¹ï¿½
     	{
     		if( data1[1]==(byte) 0x01 )
     		{
-//    			Toast.makeText(jdy_Activity.this, "ÌáÊ¾£¡APPÃÜÂëÁ¬½Ó³É¹¦", Toast.LENGTH_SHORT).show();
+//    			Toast.makeText(jdy_Activity.this, "ï¿½ï¿½Ê¾ï¿½ï¿½APPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³É¹ï¿½", Toast.LENGTH_SHORT).show();
     		}
     		else
     		{
@@ -815,7 +815,7 @@ int len_g = 0;
     	
     	if (gattServices == null) return;
 
-        if( gattServices.size()>0&&mBluetoothLeService.get_connected_status( gattServices )==2 )//±íÊ¾ÎªJDY-06¡¢JDY-08ÏµÁÐÀ¶ÑÀÄ£¿é
+        if( gattServices.size()>0&&mBluetoothLeService.get_connected_status( gattServices )==2 )//ï¿½ï¿½Ê¾ÎªJDY-06ï¿½ï¿½JDY-08Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
         {
         	connect_count = 0;
 	        if( connect_status_bit )
@@ -831,7 +831,7 @@ int len_g = 0;
 				 byte[] WriteBytes = new byte[2];
 				 WriteBytes[0] = (byte) 0xE7;
 				 WriteBytes[1] = (byte) 0xf6;
-				 mBluetoothLeService.function_data( WriteBytes );// ·¢ËÍ¶ÁÈ¡ËùÓÐIO×´Ì¬
+				 mBluetoothLeService.function_data( WriteBytes );// ï¿½ï¿½ï¿½Í¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½IO×´Ì¬
 				 
 				 
 				 updateConnectionState(R.string.connected);
@@ -839,11 +839,11 @@ int len_g = 0;
 				 enable_pass();
 			  }else{
 				  //Toast.makeText(this, "Deleted Successfully!", Toast.LENGTH_LONG).show(); 
-				  Toast toast = Toast.makeText(jdy_Activity.this, "Éè±¸Ã»ÓÐÁ¬½Ó£¡", Toast.LENGTH_SHORT); 
+				  Toast toast = Toast.makeText(jdy_Activity.this, "ï¿½è±¸Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½", Toast.LENGTH_SHORT); 
 				  toast.show(); 
 			  }
         }
-        else if( gattServices.size()>0&&mBluetoothLeService.get_connected_status( gattServices )==1 )//±íÊ¾ÎªJDY-09¡¢JDY-10ÏµÁÐÀ¶ÑÀÄ£¿é
+        else if( gattServices.size()>0&&mBluetoothLeService.get_connected_status( gattServices )==1 )//ï¿½ï¿½Ê¾ÎªJDY-09ï¿½ï¿½JDY-10Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
         {
         	connect_count = 0;
 	        if( connect_status_bit )
@@ -859,12 +859,12 @@ int len_g = 0;
 				 //enable_pass();
 			  }else{
 				  //Toast.makeText(this, "Deleted Successfully!", Toast.LENGTH_LONG).show(); 
-				  Toast toast = Toast.makeText(jdy_Activity.this, "Éè±¸Ã»ÓÐÁ¬½Ó£¡", Toast.LENGTH_SHORT); 
+				  Toast toast = Toast.makeText(jdy_Activity.this, "ï¿½è±¸Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½", Toast.LENGTH_SHORT); 
 				  toast.show(); 
 			  }
         }else
         {
-        	 Toast toast = Toast.makeText(jdy_Activity.this, "ÌáÊ¾£¡´ËÉè±¸²»ÎªJDYÏµÁÐBLEÄ£¿é", Toast.LENGTH_SHORT); 
+        	 Toast toast = Toast.makeText(jdy_Activity.this, "ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ÎªJDYÏµï¿½ï¿½BLEÄ£ï¿½ï¿½", Toast.LENGTH_SHORT); 
 			  toast.show(); 
         }
 //        SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(
@@ -896,23 +896,23 @@ int len_g = 0;
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ÉµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if( mConnected )
 		{
 			mBluetoothLeService.set_PWM_ALL_pulse( seekBar.getProgress(), seekBar.getProgress(), seekBar.getProgress(), seekBar.getProgress() );
-			textView5.setText("ÔÝ¿Õ±È£º"+seekBar.getProgress() );
+			textView5.setText("ï¿½Ý¿Õ±È£ï¿½"+seekBar.getProgress() );
 		}
 	}
 
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ÉµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		
 	}
 
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ÉµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		//mBluetoothLeService.set_PWM_ALL_pulse( seekBar.getProgress(), seekBar.getProgress(), seekBar.getProgress(), seekBar.getProgress() );
 		//Toast.makeText(jdy_Activity.this, "pulse"+seekBar.getProgress(), Toast.LENGTH_SHORT).show(); 
 	}

@@ -33,6 +33,7 @@ import com.example.jdy_touchuang.AV_Stick;
 import com.example.jdy_touchuang.jdy_switch_Activity;
 import com.example.jdy_touchuang.shengjiangji;
 import com.example.jdy_type.Get_type;
+import com.example.jdy_type.JDY_type;
 import com.example.model.BleDeviceModel;
 import com.example.sensor.jdy_ibeacon_Activity;
 import com.example.set.set;
@@ -67,12 +68,12 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
     @Override
     protected void onBleConnectSuccess() {
         super.onBleConnectSuccess();
-        LogUtils.d(TAG, "onBleConnectSuccess");
         sendMessage(BleCommandManager.Sender.composeDeviceNumCommand(ApplicationStaticValues.moduleId));
     }
 
     @Override
     protected void onMessageReceive(String msg) {
+    	super.onMessageReceive(msg);
         if (TextUtils.isEmpty(msg)){
             return;
         }
@@ -131,7 +132,7 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
         mDevListAdapter = new DeviceListAdapter(mBluetoothAdapter, AddDeviceActivity.this );
         dev_bid = (byte)0x88;//88是JDY厂家VID码
         mDevListAdapter.set_vid(dev_bid);//用于识别自家的VID相同的设备，只有模块的VID与APP的VID相同才会被搜索得到
-        lv_bleList.setAdapter( mDevListAdapter.init_adapter());
+        lv_bleList.setAdapter(mDevListAdapter.init_adapter());
 
         //mGet_type = new Get_type();
 
@@ -147,6 +148,7 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+            	LogUtils.d(TAG, "onItemClick position: " + position);
                 if (mDevListAdapter.get_count() > 0)
                 {
                     Byte vid_byte =  mDevListAdapter.get_vid( position );//返回136表示是JDY厂家模块
@@ -156,10 +158,11 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
 
                     if( vid_byte == dev_bid )//JDY厂家VID为0X88， 用户的APP不想搜索到其它厂家的JDY-08模块的话，可以设备一下 APP的VID，此时模块也需要设置，
                         //模块的VID与厂家APP的VID要一样，APP才可以搜索得到模块VID与APP一样的设备
-                        switch( mDevListAdapter.get_item_type(position) )
+                        switch(mDevListAdapter.get_item_type(position))
                         {
                             case JDY:////为标准透传模块
                             {
+                            	LogUtils.d(TAG, "点击开始绑定JDY设备");
                                 BluetoothDevice device1 = mDevListAdapter.get_item_dev(position);
                                 if (device1 == null) {
                                     return;
@@ -183,6 +186,8 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
                                         ApplicationStaticValues.deviceName = deviceName;
                                         ApplicationStaticValues.deviceAddress = deviceAddress;
                                         ApplicationStaticValues.moduleId = str;
+                                        
+                                        LogUtils.d(TAG, "确定添加 deviceName： " + deviceName + " deviceAddress: " + deviceAddress + " moduleId: " + str);
                                         bindBleService();
                                     }
                                 });
@@ -205,6 +210,7 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
                             }
                             case JDY_iBeacon:////为iBeacon设备
                             {
+                            	LogUtils.d(TAG, "点击开始绑定JDY_iBeacon设备");
                                 BluetoothDevice device1 = mDevListAdapter.get_item_dev(position);
                                 if (device1 == null) return;
                                 Intent intent1 = new Intent(AddDeviceActivity.this, jdy_ibeacon_Activity.class);;
@@ -225,11 +231,12 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
                             }
                             case sensor_temp://温度传感器
                             {
-
+                            	LogUtils.d(TAG, "点击开始绑定温度传感器设备");
                                 break;
                             }
                             case JDY_KG://开关控制APP
                             {
+                            	LogUtils.d(TAG, "点击开始绑定开关控制JDY_KG设备");
                                 BluetoothDevice device1 = mDevListAdapter.get_item_dev(position);
                                 if (device1 == null) return;
                                 Intent intent1 = new Intent(AddDeviceActivity.this, jdy_switch_Activity.class);;
@@ -245,6 +252,7 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
                             }
                             case JDY_KG1://开关控制APP
                             {
+                            	LogUtils.d(TAG, "点击开始绑定JDY_KG1设备");
                                 BluetoothDevice device1 = mDevListAdapter.get_item_dev(position);
                                 if (device1 == null) return;
                                 Intent intent1 = new Intent(AddDeviceActivity.this, shengjiangji.class);;
@@ -260,6 +268,7 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
                             }
                             case JDY_AMQ://massager 按摩器APP
                             {
+                            	LogUtils.d(TAG, "点击开始绑定按摩器APP设备");
                                 BluetoothDevice device1 = mDevListAdapter.get_item_dev(position);
                                 if (device1 == null) return;
                                 Intent intent1 = new Intent(AddDeviceActivity.this, AV_Stick.class);
@@ -319,30 +328,6 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
         Message message = new Message();
         message.what = 100;
         handler.sendMessage(message);
-
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setMessage("这是原型App，没有集成蓝牙绑定设备的功能。只是做绑定蓝牙的演示。可以输入设备名称然后添加保存");
-//        builder.setPositiveButton("确定", null);
-//        builder.show();
-//
-//        mEdtDeviceName = findViewById(R.id.myet_devicename);
-//
-//        mBtnAdd = findViewById(R.id.btn_ok);
-//        mBtnAdd.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                BleDeviceModel model = new BleDeviceModel();
-//                model.setDeviceName(mEdtDeviceName.getText().toString());
-//                model.setDeviceAddress("1000");
-//                model.setStatus(0);
-//                model.setCreateTime(System.currentTimeMillis() + "");
-//                DeviceLogic.addDevice(AddDeviceActivity.this, model);
-//                ToastUtil.show(AddDeviceActivity.this, "添加成功");
-//                Intent data = new Intent();
-//                setResult(RESULT_OK, data);
-//                finish();
-//            }
-//        });
     }
 
     Handler handler = new Handler() {

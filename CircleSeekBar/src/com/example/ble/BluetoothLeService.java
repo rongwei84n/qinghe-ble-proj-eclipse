@@ -38,8 +38,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
+import com.example.utils.LogUtils;
 import com.lee.circleseekbar.R;
 
 /**
@@ -104,17 +104,17 @@ public class BluetoothLeService extends Service {
     //int tx_cnt = 1;
     byte tx_cnt = (byte)0x01;
     public enum function_type {
-    	iBeacon_UUID, //0xe1  ÉèÖÃiBeacon UUID
-    	iBeacon_Major,//0xe2/ÉèÖÃiBeacon Major
-    	iBeacon_Minor,//0XE3:ÉèÖÃiBeacon Minor
-    	adv_intverl,//0XE4:ÉèÖÃ¹ã²¥¼ä¸ô
-    	pin_password,//0XE5:Á¬½ÓÃÜÂë   ÃÜÂëÖ»ÄÜÎª4Î»Êý×Ö       0XE5://Á¬½ÓÃÜÂë
-    	name,//0XE6:---------------------------------Éè±¸Ãû  
-    	GPIO,//0XE7:IO¹¦ÄÜ
-    	PWM,// 0XE8:PWM¹¦ÄÜ
-    	Other,//0XE9:¸´Î»Ä£¿é¡¢¶Ï¿ªÀ¶ÑÀ¡¢¶ÁÈ¡Ä£¿éµÄ°æ±¾
-    	Power,//0XEA:Éè±¸¹¦ÂÊ
-    	RTC,//0XEB:RTC¹¦ÄÜ
+    	iBeacon_UUID, //0xe1  ï¿½ï¿½ï¿½ï¿½iBeacon UUID
+    	iBeacon_Major,//0xe2/ï¿½ï¿½ï¿½ï¿½iBeacon Major
+    	iBeacon_Minor,//0XE3:ï¿½ï¿½ï¿½ï¿½iBeacon Minor
+    	adv_intverl,//0XE4:ï¿½ï¿½ï¿½Ã¹ã²¥ï¿½ï¿½ï¿½
+    	pin_password,//0XE5:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Îª4Î»ï¿½ï¿½ï¿½ï¿½       0XE5://ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    	name,//0XE6:---------------------------------ï¿½è±¸ï¿½ï¿½  
+    	GPIO,//0XE7:IOï¿½ï¿½ï¿½ï¿½
+    	PWM,// 0XE8:PWMï¿½ï¿½ï¿½ï¿½
+    	Other,//0XE9:ï¿½ï¿½Î»Ä£ï¿½é¡¢ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡Ä£ï¿½ï¿½Ä°æ±¾
+    	Power,//0XEA:ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+    	RTC,//0XEB:RTCï¿½ï¿½ï¿½ï¿½
     	
     }
 
@@ -133,12 +133,12 @@ public class BluetoothLeService extends Service {
     }
     public  byte[] hex2byte(byte[] b) {
         if ((b.length % 2) != 0) {
-            throw new IllegalArgumentException("³¤¶È²»ÊÇÅ¼Êý");
+            throw new IllegalArgumentException("ï¿½ï¿½ï¿½È²ï¿½ï¿½ï¿½Å¼ï¿½ï¿½");
         }
         byte[] b2 = new byte[b.length / 2];
         for (int n = 0; n < b.length; n += 2) {
             String item = new String(b, n, 2);
-            // Á½Î»Ò»×é£¬±íÊ¾Ò»¸ö×Ö½Ú,°ÑÕâÑù±íÊ¾µÄ16½øÖÆ×Ö·û´®£¬»¹Ô­³ÉÒ»¸ö½øÖÆ×Ö½Ú
+            // ï¿½ï¿½Î»Ò»ï¿½é£¬ï¿½ï¿½Ê¾Ò»ï¿½ï¿½ï¿½Ö½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½16ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
             b2[n / 2] = (byte) Integer.parseInt(item, 16);
         }
         b = null;
@@ -158,7 +158,7 @@ public class BluetoothLeService extends Service {
     
     
 	/**
-	 * byte[]×ª±äÎª16½øÖÆString×Ö·û, Ã¿¸ö×Ö½Ú2Î», ²»×ã²¹0
+	 * byte[]×ªï¿½ï¿½Îª16ï¿½ï¿½ï¿½ï¿½Stringï¿½Ö·ï¿½, Ã¿ï¿½ï¿½ï¿½Ö½ï¿½2Î», ï¿½ï¿½ï¿½ã²¹0
 	 */
 	public  String getStringByBytes(byte[] bytes) {
 		String result = null;
@@ -180,13 +180,13 @@ public class BluetoothLeService extends Service {
     
     
 	/**
-	 * È¡µÃÔÚ16½øÖÆ×Ö·û´®ÖÐ¸÷charËù´ú±íµÄ16½øÖÆÊý
+	 * È¡ï¿½ï¿½ï¿½ï¿½16ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ð¸ï¿½charï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½16ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	private static byte charToByte(char c) {
 		return (byte) "0123456789ABCDEF".indexOf(c);
 	}
 	/**
-	 * °Ñ16½øÖÆString×Ö·û×ª±äÎªbyte[]
+	 * ï¿½ï¿½16ï¿½ï¿½ï¿½ï¿½Stringï¿½Ö·ï¿½×ªï¿½ï¿½Îªbyte[]
 	 */
 	public static byte[] getBytesByString(String data) //
 	{
@@ -203,21 +203,21 @@ public class BluetoothLeService extends Service {
 		}
 		return bytes;
 	}
-    public String bytesToHexString(byte[] src)//Àý×Óbyte[]£º0x11,0x22,0x33,0x44,0x55,0x66  ×ª»»ºóString:¡°112233445566¡±
+    public String bytesToHexString(byte[] src)//ï¿½ï¿½ï¿½ï¿½byte[]ï¿½ï¿½0x11,0x22,0x33,0x44,0x55,0x66  ×ªï¿½ï¿½ï¿½ï¿½String:ï¿½ï¿½112233445566ï¿½ï¿½
     {  
       	 StringBuilder stringBuilder = new StringBuilder(src.length);
            for(byte byteChar : src)
               stringBuilder.append(String.format("%02X", byteChar));
           return stringBuilder.toString();  
       } 
-    public String bytesToHexString1(byte[] src)//Àý×Óbyte[]£º0x11,0x22,0x33,0x44,0x55,0x66  ×ª»»ºóString:¡°11 22 33 44 55 66¡±
+    public String bytesToHexString1(byte[] src)//ï¿½ï¿½ï¿½ï¿½byte[]ï¿½ï¿½0x11,0x22,0x33,0x44,0x55,0x66  ×ªï¿½ï¿½ï¿½ï¿½String:ï¿½ï¿½11 22 33 44 55 66ï¿½ï¿½
     {  
       	 StringBuilder stringBuilder = new StringBuilder(src.length);
            for(byte byteChar : src)
               stringBuilder.append(String.format(" %02X", byteChar));
           return stringBuilder.toString();  
       } 
-    public String bytesToHexString1(byte[] src,int index )//Àý×Óbyte[]£º0x11,0x22,0x33,0x44,0x55,0x66  ×ª»»ºóString:¡°11 22 33 44 55 66¡±
+    public String bytesToHexString1(byte[] src,int index )//ï¿½ï¿½ï¿½ï¿½byte[]ï¿½ï¿½0x11,0x22,0x33,0x44,0x55,0x66  ×ªï¿½ï¿½ï¿½ï¿½String:ï¿½ï¿½11 22 33 44 55 66ï¿½ï¿½
     {  
     	if( src==null )return null;
       	 StringBuilder stringBuilder = new StringBuilder(src.length);
@@ -227,39 +227,39 @@ public class BluetoothLeService extends Service {
           return stringBuilder.toString();  
       } 
     
-	public String String_to_HexString0( String str )//Àý×ÓString¡°123456¡± ×ª»»ºóString£º¡°313233343536¡±
+	public String String_to_HexString0( String str )//ï¿½ï¿½ï¿½ï¿½Stringï¿½ï¿½123456ï¿½ï¿½ ×ªï¿½ï¿½ï¿½ï¿½Stringï¿½ï¿½ï¿½ï¿½313233343536ï¿½ï¿½
 	{
      	String st =str.toString();
     	byte[] WriteBytes = new byte[st.length()];
     	WriteBytes = st.getBytes();
     	return bytesToHexString( WriteBytes );
 	}
-	public String String_to_HexString( String str )//Àý×ÓString¡°123456¡± ×ª»»ºóString£º¡°31 32 33 34 35 36¡±
+	public String String_to_HexString( String str )//ï¿½ï¿½ï¿½ï¿½Stringï¿½ï¿½123456ï¿½ï¿½ ×ªï¿½ï¿½ï¿½ï¿½Stringï¿½ï¿½ï¿½ï¿½31 32 33 34 35 36ï¿½ï¿½
 	{
      	String st =str.toString();
     	byte[] WriteBytes = new byte[st.length()];
     	WriteBytes = st.getBytes();
     	return bytesToHexString1( WriteBytes );
 	}
-	public byte[] String_to_byte( String str )//Àý×ÓString¡°123456¡± ×ª»»ºóbyte[]£º0x31,0x32,0x33,0x34,0x35,0x36
+	public byte[] String_to_byte( String str )//ï¿½ï¿½ï¿½ï¿½Stringï¿½ï¿½123456ï¿½ï¿½ ×ªï¿½ï¿½ï¿½ï¿½byte[]ï¿½ï¿½0x31,0x32,0x33,0x34,0x35,0x36
 	{
      	String st =str.toString();
     	byte[] WriteBytes = new byte[st.length()];
     	return WriteBytes;
 	}
 
-	public String byte_to_String( byte[] byt )//Àý×Óbyte[]£º0x31,0x32,0x33,0x34,0x35,0x36  ×ª»»ºóString:¡°123456¡±
+	public String byte_to_String( byte[] byt )//ï¿½ï¿½ï¿½ï¿½byte[]ï¿½ï¿½0x31,0x32,0x33,0x34,0x35,0x36  ×ªï¿½ï¿½ï¿½ï¿½String:ï¿½ï¿½123456ï¿½ï¿½
 	{
-	 String t = new String( byt );//bytep[]×ª»»ÎªString
+	 String t = new String( byt );//bytep[]×ªï¿½ï¿½ÎªString
 	 return t;
 	}
-	public String byte_to_String( byte[] byt,int index )//Àý×Óbyte[]£º0x31,0x32,0x33,0x34,0x35,0x36  ×ª»»ºóString:¡°123456¡±
+	public String byte_to_String( byte[] byt,int index )//ï¿½ï¿½ï¿½ï¿½byte[]ï¿½ï¿½0x31,0x32,0x33,0x34,0x35,0x36  ×ªï¿½ï¿½ï¿½ï¿½String:ï¿½ï¿½123456ï¿½ï¿½
 	{
 		if( byt==null )return null;
 		byte[] WriteBytes = new byte[ byt.length-index ];
 		for( int i=index;i<byt.length;i++ )
 			WriteBytes[ i-index ]=byt[i];
-	 String t = new String( WriteBytes );//bytep[]×ª»»ÎªString
+	 String t = new String( WriteBytes );//bytep[]×ªï¿½ï¿½ÎªString
 	 return t;
 	}
 	
@@ -366,7 +366,7 @@ public class BluetoothLeService extends Service {
 			BluetoothGattCharacteristic ale;// =service.getCharacteristic(UUID.fromString(Characteristic_uuid_TX));
 			switch( p )
 			{
-				case 0://0xFFE1 //Í¸´«
+				case 0://0xFFE1 //Í¸ï¿½ï¿½
 				{
 					ale =service.getCharacteristic(UUID.fromString(Characteristic_uuid_TX));
 				}break;
@@ -414,32 +414,32 @@ public class BluetoothLeService extends Service {
     
 	public String get_mem_data(String key) 
 	{
-		//Í¬Ñù£¬ÔÚ¶ÁÈ¡SharedPreferencesÊý¾ÝÇ°ÒªÊµÀý»¯³öÒ»¸öSharedPreferences¶ÔÏó 
+		//Í¬ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½È¡SharedPreferencesï¿½ï¿½ï¿½ï¿½Ç°ÒªÊµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½SharedPreferencesï¿½ï¿½ï¿½ï¿½ 
 		SharedPreferences sharedPreferences= getSharedPreferences("jdy-ble", 
 		Activity.MODE_PRIVATE); 
-		// Ê¹ÓÃgetString·½·¨»ñµÃvalue£¬×¢ÒâµÚ2¸ö²ÎÊýÊÇvalueµÄÄ¬ÈÏÖµ 
+		// Ê¹ï¿½ï¿½getStringï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½valueï¿½ï¿½×¢ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½valueï¿½ï¿½Ä¬ï¿½ï¿½Öµ 
 		String name =sharedPreferences.getString(key, ""); 
 		if( name==null||name=="") return "123456";
 		return name;
 	}
 	public void set_mem_data(String key, String values) 
 	{
-		//ÊµÀý»¯SharedPreferences¶ÔÏó£¨µÚÒ»²½£© 
+		//Êµï¿½ï¿½ï¿½ï¿½SharedPreferencesï¿½ï¿½ï¿½ó£¨µï¿½Ò»ï¿½ï¿½ï¿½ï¿½ 
 		SharedPreferences mySharedPreferences= getSharedPreferences("jdy-ble", 
 		Activity.MODE_PRIVATE);
-		//ÊµÀý»¯SharedPreferences.Editor¶ÔÏó£¨µÚ¶þ²½£© 
+		//Êµï¿½ï¿½ï¿½ï¿½SharedPreferences.Editorï¿½ï¿½ï¿½ó£¨µÚ¶ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		SharedPreferences.Editor editor = mySharedPreferences.edit(); 
-		//ÓÃputStringµÄ·½·¨±£´æÊý¾Ý 
+		//ï¿½ï¿½putStringï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		editor.putString(key, values ); 
-		//Ìá½»µ±Ç°Êý¾Ý 
+		//ï¿½á½»ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ 
 		editor.commit(); 
-		//Ê¹ÓÃtoastÐÅÏ¢ÌáÊ¾¿òÌáÊ¾³É¹¦Ð´ÈëÊý¾Ý 
+		//Ê¹ï¿½ï¿½toastï¿½ï¿½Ï¢ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½É¹ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		//Toast.makeText(this, values , 
 		//Toast.LENGTH_LONG).show(); 
 	}
     
     
-    public boolean get_password( String password )//¶ÁÈ¡Éè±¸ÃÜÂë
+    public boolean get_password( String password )//ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
     {
     	boolean p = true;
     	if( password==null )return false;
@@ -455,7 +455,7 @@ public class BluetoothLeService extends Service {
 		mBluetoothGatt.writeCharacteristic(gg);
 		return p;
     }
-    public boolean set_password( String password,String new_password )//¶ÁÈ¡Éè±¸ÃÜÂë
+    public boolean set_password( String password,String new_password )//ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
     {
     	boolean p = true;
     	if( password==null||new_password==null )return false;
@@ -492,7 +492,7 @@ public class BluetoothLeService extends Service {
         return utfcode.toString();
     }
     
-//    public boolean set_name_hz( String name )//¸üÐÂÉè±¸Ãû
+//    public boolean set_name_hz( String name )//ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½
 //    {
 //    	boolean p = true;
 //    	if( name==null)return false;
@@ -519,7 +519,7 @@ public class BluetoothLeService extends Service {
 //		mBluetoothGatt.writeCharacteristic(gg);
 //		return p;
 //    }
-    public boolean set_name( String name )//¸üÐÂÉè±¸Ãû
+    public boolean set_name( String name )//ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½
     {
     	boolean p = true;
     	if( name==null)return false;
@@ -548,7 +548,7 @@ public class BluetoothLeService extends Service {
     	if( length==0 )return false;
     	int angle_int_value =Integer.valueOf(angle).intValue();
     	
-    	byte m2 = (byte)(0x22);//Í¸´«Ä£¿éÃÜÂëÎ»ÅÐ¶Ï
+    	byte m2 = (byte)(0x22);//Í¸ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ð¶ï¿½
     	boolean p11 = true;
     	String txt="E7f3";
     	
@@ -581,7 +581,7 @@ public class BluetoothLeService extends Service {
     }
     public boolean MC_set_button( boolean p )//
     {
-    	byte m2 = (byte)(0x22);//Í¸´«Ä£¿éÃÜÂëÎ»ÅÐ¶Ï
+    	byte m2 = (byte)(0x22);//Í¸ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ð¶ï¿½
     	boolean p11 = true;
     	String txt="E7f1";
     	if( p )
@@ -614,7 +614,7 @@ public class BluetoothLeService extends Service {
 		return p11;
     	
     }
-    public boolean MC_set_password( String password,String new_password )//¶ÁÈ¡Éè±¸ÃÜÂë
+    public boolean MC_set_password( String password,String new_password )//ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
     {
     	boolean p = true;
     	if( password==null||new_password==null )return false;
@@ -636,7 +636,7 @@ public class BluetoothLeService extends Service {
     }
     
     
-    public boolean set_IO1( boolean p )//ÉèÖÃIO1µçÆ½
+    public boolean set_IO1( boolean p )//ï¿½ï¿½ï¿½ï¿½IO1ï¿½ï¿½Æ½
     {
     	boolean p11 = true;
     	String txt="E7f1";
@@ -649,7 +649,7 @@ public class BluetoothLeService extends Service {
 		mBluetoothGatt.writeCharacteristic(gg);
 		return p11;
     }
-    public boolean set_IO2( boolean p )///ÉèÖÃIO2µçÆ½
+    public boolean set_IO2( boolean p )///ï¿½ï¿½ï¿½ï¿½IO2ï¿½ï¿½Æ½
     {
     	boolean p11 = true;
     	String txt="E7f2";
@@ -662,7 +662,7 @@ public class BluetoothLeService extends Service {
 		mBluetoothGatt.writeCharacteristic(gg);
 		return p11;
     }
-    public boolean set_IO3( boolean p )///ÉèÖÃIO3µçÆ½
+    public boolean set_IO3( boolean p )///ï¿½ï¿½ï¿½ï¿½IO3ï¿½ï¿½Æ½
     {
     	boolean p11 = true;
     	String txt="E7f3";
@@ -675,7 +675,7 @@ public class BluetoothLeService extends Service {
 		mBluetoothGatt.writeCharacteristic(gg);
 		return p11;
     }
-    public boolean set_IO4( boolean p )///ÉèÖÃIO4µçÆ½
+    public boolean set_IO4( boolean p )///ï¿½ï¿½ï¿½ï¿½IO4ï¿½ï¿½Æ½
     {
     	boolean p11 = true;
     	String txt="E7f4";
@@ -688,7 +688,7 @@ public class BluetoothLeService extends Service {
 		mBluetoothGatt.writeCharacteristic(gg);
 		return p11;
     }
-    public boolean set_IO_ALL( boolean p )///ÉèÖÃIO4µçÆ½
+    public boolean set_IO_ALL( boolean p )///ï¿½ï¿½ï¿½ï¿½IO4ï¿½ï¿½Æ½
     {
     	boolean p11 = true;
     	String txt;
@@ -701,7 +701,7 @@ public class BluetoothLeService extends Service {
 		mBluetoothGatt.writeCharacteristic(gg);
 		return p11;
     }
-    public void get_IO_ALL(  )///¶ÁÈ¡4Â·IO×´Ì¬
+    public void get_IO_ALL(  )///ï¿½ï¿½È¡4Â·IO×´Ì¬
     {
     	String txt="E7f6";
     	WriteBytes= hex2byte( txt.toString().getBytes() );
@@ -711,7 +711,7 @@ public class BluetoothLeService extends Service {
 		mBluetoothGatt.writeCharacteristic(gg);
     }
     
-    public void set_APP_PASSWORD( String pss )///ÉèÖÃAPPÁ¬½ÓÃÜÂë
+    public void set_APP_PASSWORD( String pss )///ï¿½ï¿½ï¿½ï¿½APPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
     	boolean p11 = true;
     	String txt="E555";
@@ -725,7 +725,7 @@ public class BluetoothLeService extends Service {
 		
     }
     
-    public boolean set_ibeacon_UUID( String uuid )//ÉèÖÃiBeacon UUID
+    public boolean set_ibeacon_UUID( String uuid )//ï¿½ï¿½ï¿½ï¿½iBeacon UUID
     {
     	if( uuid.length()==36 )
 		{
@@ -747,17 +747,17 @@ public class BluetoothLeService extends Service {
 				mBluetoothGatt.writeCharacteristic(gg);
 				return true;
 			}else{
-				//Toast toast = Toast.makeText(DeviceControlActivity.this, "ÌáÊ¾£¡UUIDÊäÈë¸ñÊ½²»¶Ô", Toast.LENGTH_SHORT); 
+				//Toast toast = Toast.makeText(DeviceControlActivity.this, "ï¿½ï¿½Ê¾ï¿½ï¿½UUIDï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½", Toast.LENGTH_SHORT); 
     			//toast.show(); 
 				return false;
 			}
 		}else {
-			//Toast toast = Toast.makeText(DeviceControlActivity.this, "ÌáÊ¾£¡UUIDÊäÈë²»¶Ô", Toast.LENGTH_SHORT); 
+			//Toast toast = Toast.makeText(DeviceControlActivity.this, "ï¿½ï¿½Ê¾ï¿½ï¿½UUIDï¿½ï¿½ï¿½ë²»ï¿½ï¿½", Toast.LENGTH_SHORT); 
 			//toast.show(); 
 			return false;
 		}
     }
-    public boolean set_ibeacon_MAJOR( String major )//ÉèÖÃiBeacon Major
+    public boolean set_ibeacon_MAJOR( String major )//ï¿½ï¿½ï¿½ï¿½iBeacon Major
     {
     	if( major==null )return false;
     	else if( major.length()==0 )return false;
@@ -779,7 +779,7 @@ public class BluetoothLeService extends Service {
     	
     	return true;
     }
-    public boolean set_ibeacon_MIMOR( String minor )//ÉèÖÃiBeacon Minor
+    public boolean set_ibeacon_MIMOR( String minor )//ï¿½ï¿½ï¿½ï¿½iBeacon Minor
     {
     	if( minor==null )return false;
     	else if( minor.length()==0 )return false;
@@ -800,7 +800,7 @@ public class BluetoothLeService extends Service {
     	
     	return true;
     }
-    public void set_BroadInterval( int interval )///ÉèÖÃ¹ã²¥¼ä¸ô
+    public void set_BroadInterval( int interval )///ï¿½ï¿½ï¿½Ã¹ã²¥ï¿½ï¿½ï¿½
     {
     	String txt="E441";
     	String vs=String.format("%02x", interval );
@@ -811,7 +811,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void get_BroadInterval(  )///¶ÁÈ¡¹ã²¥¼ä¸ô
+    public void get_BroadInterval(  )///ï¿½ï¿½È¡ï¿½ã²¥ï¿½ï¿½ï¿½
     {
     	String txt="E442";
     	WriteBytes= hex2byte( txt.toString().getBytes() );
@@ -822,7 +822,7 @@ public class BluetoothLeService extends Service {
     }
     
     
-    public void set_PWM_OPEN( int pwm )//ÉèÖÃPWM¿ª¹Ø
+    public void set_PWM_OPEN( int pwm )//ï¿½ï¿½ï¿½ï¿½PWMï¿½ï¿½ï¿½ï¿½
     {
     	String txt="E8a1";
     	String vs=String.format("%02x", pwm );
@@ -833,7 +833,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_PWM_frequency( int frequency )//ÉèÖÃPWMÆµÂÊ
+    public void set_PWM_frequency( int frequency )//ï¿½ï¿½ï¿½ï¿½PWMÆµï¿½ï¿½
     {
     	String txt="E8a2";
 		String vs=String.format("%02x", frequency);
@@ -846,7 +846,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_PWM1_pulse( int pulse )//ÉèÖÃPWM1Âö¿í
+    public void set_PWM1_pulse( int pulse )//ï¿½ï¿½ï¿½ï¿½PWM1ï¿½ï¿½ï¿½ï¿½
     {
     	String txt="E8a3";
     	String vs=String.format("%02x", pulse );
@@ -857,7 +857,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_PWM2_pulse( int pulse )//ÉèÖÃPWM2Âö¿í
+    public void set_PWM2_pulse( int pulse )//ï¿½ï¿½ï¿½ï¿½PWM2ï¿½ï¿½ï¿½ï¿½
     {
     	String txt="E8a4";
     	String vs=String.format("%02x", pulse );
@@ -868,7 +868,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_PWM3_pulse( int pulse )//ÉèÖÃPWM3Âö¿í
+    public void set_PWM3_pulse( int pulse )//ï¿½ï¿½ï¿½ï¿½PWM3ï¿½ï¿½ï¿½ï¿½
     {
     	String txt="E8a5";
     	String vs=String.format("%02x", pulse );
@@ -879,7 +879,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_PWM4_pulse( int pulse )//ÉèÖÃPWM4Âö¿í
+    public void set_PWM4_pulse( int pulse )//ï¿½ï¿½ï¿½ï¿½PWM4ï¿½ï¿½ï¿½ï¿½
     {
     	String txt="E8a6";
     	String vs=String.format("%02x", pulse );
@@ -891,7 +891,7 @@ public class BluetoothLeService extends Service {
 		mBluetoothGatt.writeCharacteristic(gg);
     }
     
-    public void set_PWM_ALL_pulse( int PWM1_pulse,int PWM2_pulse,int PWM3_pulse,int PWM4_pulse )//ÉèÖÃPWM4Âö¿í
+    public void set_PWM_ALL_pulse( int PWM1_pulse,int PWM2_pulse,int PWM3_pulse,int PWM4_pulse )//ï¿½ï¿½ï¿½ï¿½PWM4ï¿½ï¿½ï¿½ï¿½
     {
     	String txt="E8a7";
     	String vs=String.format("%02x", PWM1_pulse );
@@ -912,7 +912,7 @@ public class BluetoothLeService extends Service {
     
     
     
-    public void set_AV_OPEN( int p )//ÉèÖÃAV°ô¹¤×÷Ä£Ê½
+    public void set_AV_OPEN( int p )//ï¿½ï¿½ï¿½ï¿½AVï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
     {
     	String txt="E9a501";
     	String vs=String.format("%02x", p );
@@ -923,7 +923,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_AV_PULSE( int p )//ÉèÖÃAV°ô¹¤×÷Ä£Ê½
+    public void set_AV_PULSE( int p )//ï¿½ï¿½ï¿½ï¿½AVï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
     {
     	String txt="E9a502";
     	String vs=String.format("%02x", p );
@@ -936,7 +936,7 @@ public class BluetoothLeService extends Service {
     }
     
     
-    public void set_LED_Mode( int i )//Éè±¸LED¹¤×÷Ä£Ê½   ÉèÖÃLEDµÆÄ£Ê½ ¿ÉÉèÖÃ--£¨Ãæ°åÄ£Ê½ = 51¡¢¹Ì¶¨Ä£Ê½ =£¨1-25£©¡¢×Ô¶¨ÒåÄ£Ê½ = 50
+    public void set_LED_Mode( int i )//ï¿½è±¸LEDï¿½ï¿½ï¿½ï¿½Ä£Ê½   ï¿½ï¿½ï¿½ï¿½LEDï¿½ï¿½Ä£Ê½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½--ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½ = 51ï¿½ï¿½ï¿½Ì¶ï¿½Ä£Ê½ =ï¿½ï¿½1-25ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ä£Ê½ = 50
     {
     	String txt="E9b101";
     	String vs=String.format("%02x", i );
@@ -947,7 +947,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_LED_Brightness( int i )//Éè±¸ÁÁ¶È( 0 - 255 )
+    public void set_LED_Brightness( int i )//ï¿½è±¸ï¿½ï¿½ï¿½ï¿½( 0 - 255 )
     {
     	String txt="E9b102";
     	String vs=String.format("%02x", i );
@@ -958,7 +958,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_LED_T_J_F( int i )//ÉèÖÃLEDµÆ( Ìø±ä=1¡¢½¥±ä=2¡¢ÆµÉÁ=3 £©
+    public void set_LED_T_J_F( int i )//ï¿½ï¿½ï¿½ï¿½LEDï¿½ï¿½( ï¿½ï¿½ï¿½ï¿½=1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½=2ï¿½ï¿½Æµï¿½ï¿½=3 ï¿½ï¿½
     {
     	String txt="E9b103";
     	String vs=String.format("%02x", i );
@@ -969,7 +969,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_LED_Speed( int i )//ÉèÖÃLEDµÆËÙ¶È  ( 0-100 )
+    public void set_LED_Speed( int i )//ï¿½ï¿½ï¿½ï¿½LEDï¿½ï¿½ï¿½Ù¶ï¿½  ( 0-100 )
     {
     	String txt="E9b104";
     	String vs=String.format("%02x", i );
@@ -980,7 +980,7 @@ public class BluetoothLeService extends Service {
 		gg.setValue(WriteBytes);
 		mBluetoothGatt.writeCharacteristic(gg);
     }
-    public void set_LED_Custom_LEN( int i )//ÉèÖÃ×Ô¶¨ÒåÄ£Ê½µÄÊý¾Ý³¤¶È
+    public void set_LED_Custom_LEN( int i )//ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
     {
     	String txt="E9b1A0";
     	String vs=String.format("%02x", i );
@@ -992,7 +992,7 @@ public class BluetoothLeService extends Service {
 		mBluetoothGatt.writeCharacteristic(gg);
     }
     
-    public boolean set_LED_Custom1( String dd )//ÉèÖÃ×Ô¶¨ÒåÄ£Ê½µÄÊý¾Ý1
+    public boolean set_LED_Custom1( String dd )//ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1
     {
     	if( dd==null )return false;
     	int len = dd.length();
@@ -1009,7 +1009,7 @@ public class BluetoothLeService extends Service {
     	}
     	else return false;
     }
-    public boolean set_LED_Custom2( String dd )//ÉèÖÃ×Ô¶¨ÒåÄ£Ê½µÄÊý¾Ý2
+    public boolean set_LED_Custom2( String dd )//ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2
     {
     	if( dd==null )return false;
     	int len = dd.length();
@@ -1026,7 +1026,7 @@ public class BluetoothLeService extends Service {
     	}
     	else return false;
     }
-    public boolean set_LED_Custom3( String dd )//ÉèÖÃ×Ô¶¨ÒåÄ£Ê½µÄÊý¾Ý3
+    public boolean set_LED_Custom3( String dd )//ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3
     {
     	if( dd==null )return false;
     	int len = dd.length();
@@ -1043,7 +1043,7 @@ public class BluetoothLeService extends Service {
     	}
     	else return false;
     }
-    public boolean set_LED_Custom4( String dd )//ÉèÖÃ×Ô¶¨ÒåÄ£Ê½µÄÊý¾Ý4
+    public boolean set_LED_Custom4( String dd )//ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½4
     {
     	if( dd==null )return false;
     	int len = dd.length();
@@ -1061,7 +1061,7 @@ public class BluetoothLeService extends Service {
     	else return false;
     }
     
-    public boolean set_LED_PAD_color( String dd )//ÉèÖÃÃæ°åÑÕÉ« 
+    public boolean set_LED_PAD_color( String dd )//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É« 
     {
     	if( dd==null )return false;
     	int len = dd.length();
@@ -1078,7 +1078,7 @@ public class BluetoothLeService extends Service {
     	}
     	else return false;
     }
-    public void set_LED_OPEN( boolean p )//ÉèÖÃÃæ°åÑÕÉ« 
+    public void set_LED_OPEN( boolean p )//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É« 
     {
     	
 		String txt="E9b1A9";
@@ -1153,12 +1153,12 @@ public class BluetoothLeService extends Service {
 				mBluetoothGatt.writeCharacteristic(gg);
 				return true;
 			}else{
-				//Toast toast = Toast.makeText(DeviceControlActivity.this, "ÌáÊ¾£¡UUIDÊäÈë¸ñÊ½²»¶Ô", Toast.LENGTH_SHORT); 
+				//Toast toast = Toast.makeText(DeviceControlActivity.this, "ï¿½ï¿½Ê¾ï¿½ï¿½UUIDï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½", Toast.LENGTH_SHORT); 
     			//toast.show(); 
 				return false;
 			}
 		}else {
-			//Toast toast = Toast.makeText(DeviceControlActivity.this, "ÌáÊ¾£¡UUIDÊäÈë²»¶Ô", Toast.LENGTH_SHORT); 
+			//Toast toast = Toast.makeText(DeviceControlActivity.this, "ï¿½ï¿½Ê¾ï¿½ï¿½UUIDï¿½ï¿½ï¿½ë²»ï¿½ï¿½", Toast.LENGTH_SHORT); 
 			//toast.show(); 
 			return false;
 		}
@@ -1354,7 +1354,7 @@ public class BluetoothLeService extends Service {
         }
         if( jdy_ble_ffe1==1&&jdy_ble_ffe2==1 )return 2;//JDY-06,JDY-06
         else if( jdy_ble_ffe1==1&&jdy_ble_ffe2==0 )return 1;//JDY-09,JDY-10
-        else return 0;//²»ÎªJDYÏµÁÐBLEÀ¶ÑÀ
+        else return 0;//ï¿½ï¿½ÎªJDYÏµï¿½ï¿½BLEï¿½ï¿½ï¿½ï¿½
         //return count_char;
     }
     
@@ -1369,15 +1369,15 @@ public class BluetoothLeService extends Service {
                 intentAction = ACTION_GATT_CONNECTED;
                 mConnectionState = STATE_CONNECTED;
                 broadcastUpdate(intentAction);
-                Log.i(TAG, "Connected to GATT server.");
+                LogUtils.i(TAG, "Connected to GATT server.");
                 // Attempts to discover services after successful connection.
-                Log.i(TAG, "Attempting to start service discovery:" +
+                LogUtils.i(TAG, "Attempting to start service discovery:" +
                         mBluetoothGatt.discoverServices());
 
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 intentAction = ACTION_GATT_DISCONNECTED;
                 mConnectionState = STATE_DISCONNECTED;
-                Log.i(TAG, "Disconnected from GATT server.");
+                LogUtils.i(TAG, "Disconnected from GATT server.");
                 broadcastUpdate(intentAction);
             }
         }
@@ -1387,7 +1387,7 @@ public class BluetoothLeService extends Service {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
             } else {
-                Log.w(TAG, "onServicesDiscovered received: " + status);
+            	LogUtils.w(TAG, "onServicesDiscovered received: " + status);
             }
         }
 
@@ -1434,7 +1434,7 @@ public class BluetoothLeService extends Service {
                                  final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
 
-        Log.d("getUuid"," len = " + characteristic.getUuid() );
+        LogUtils.d(TAG,"getUuid len = " + characteristic.getUuid() );
 
         // This is special handling for the Heart Rate Measurement profile.  Data parsing is
         // carried out as per profile specifications:
@@ -1518,14 +1518,14 @@ public class BluetoothLeService extends Service {
         if (mBluetoothManager == null) {
             mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
             if (mBluetoothManager == null) {
-                Log.e(TAG, "Unable to initialize BluetoothManager.");
+            	LogUtils.e(TAG, "Unable to initialize BluetoothManager.");
                 return false;
             }
         }
 
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         if (mBluetoothAdapter == null) {
-            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
+        	LogUtils.e(TAG, "Unable to obtain a BluetoothAdapter.");
             return false;
         }
 
@@ -1543,15 +1543,16 @@ public class BluetoothLeService extends Service {
      *         callback.
      */
     public boolean connect(final String address) {
+    	LogUtils.d(TAG, "connect address: " + address);
         if (mBluetoothAdapter == null || address == null) {
-            Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
+            LogUtils.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return false;
         }
 
         // Previously connected device.  Try to reconnect.
         if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
                 && mBluetoothGatt != null) {
-            Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
+        	LogUtils.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
             if (mBluetoothGatt.connect()) {
                 mConnectionState = STATE_CONNECTING;
                 return true;
@@ -1562,13 +1563,13 @@ public class BluetoothLeService extends Service {
 
         final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         if (device == null) {
-            Log.w(TAG, "Device not found.  Unable to connect.");
+        	LogUtils.w(TAG, "Device not found.  Unable to connect.");
             return false;
         }
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
         mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
-        Log.d(TAG, "Trying to create a new connection.");
+        LogUtils.d(TAG, "Trying to create a new connection.");
         mBluetoothDeviceAddress = address;
         mConnectionState = STATE_CONNECTING;
         return true;
@@ -1581,23 +1582,25 @@ public class BluetoothLeService extends Service {
      * callback.
      */
     public void disconnect() {
+    	LogUtils.d(TAG, "disconnect");
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Log.w(TAG, "BluetoothAdapter not initialized");
+        	LogUtils.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
         
         mBluetoothGatt.disconnect();
     }
     public boolean isconnect() {
-       
-        
-       return mBluetoothGatt.connect();
+    	boolean result = mBluetoothGatt.connect();
+    	LogUtils.d(TAG, "isconnect: " + result);
+        return result;
     }
     /**
      * After using a given BLE device, the app must call this method to ensure resources are
      * released properly.
      */
     public void close() {
+    	LogUtils.d(TAG, "close");
         if (mBluetoothGatt == null) {
             return;
         }
@@ -1614,7 +1617,7 @@ public class BluetoothLeService extends Service {
      */
     public void readCharacteristic(BluetoothGattCharacteristic characteristic) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Log.w(TAG, "BluetoothAdapter not initialized");
+        	LogUtils.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
         mBluetoothGatt.readCharacteristic(characteristic);
@@ -1629,7 +1632,7 @@ public class BluetoothLeService extends Service {
     public void setCharacteristicNotification(BluetoothGattCharacteristic characteristic,
                                               boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Log.w(TAG, "BluetoothAdapter not initialized");
+        	LogUtils.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);

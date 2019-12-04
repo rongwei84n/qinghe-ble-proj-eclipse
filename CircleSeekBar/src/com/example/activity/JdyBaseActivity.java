@@ -33,8 +33,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -115,6 +113,8 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     }
 
     protected final void sendMessage(String msg){
+    	LogUtils.d(TAG, "sendMessage: " + msg + " connect_status_bit: " + connect_status_bit
+    			+ " mConnected: " + mConnected);
         if(connect_status_bit){
             if(mConnected) {
                 tx_count += mBluetoothLeService.txxx(msg, notSendHex);//发送字符串数据
@@ -129,20 +129,21 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
 
     protected final void bindBleService(){
         showLoading();
+        LogUtils.d(TAG, "bindBleService");
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
     protected void onMessageReceive(String msg){
-
+    	LogUtils.d(TAG, "onMessageReceive, msg: " + msg);
     }
 
     protected void onBleConnectSuccess(){
-
+    	LogUtils.d(TAG, "onBleConnectSuccess");
     }
 
     protected void onBleConnectDisconnect(){
-
+    	LogUtils.d(TAG, "onBleConnectDisconnect");
     }
 
     // Code to manage Service lifecycle.
@@ -150,6 +151,7 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
+        	LogUtils.d(TAG, "onServiceConnected");
             mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             if (!mBluetoothLeService.initialize()) {
                 LogUtils.e(TAG, "Unable to initialize Bluetooth");
@@ -161,6 +163,7 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
+        	LogUtils.d(TAG, "onServiceDisconnected");
             mBluetoothLeService = null;
         }
     };
@@ -171,10 +174,11 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
     // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
     //                        or notification operations.
-    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+    protected final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
+            LogUtils.d(TAG, "mGattUpdateReceiver action: " + action);
             hideLoading();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true;
@@ -192,7 +196,8 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
                 clearUI();
                 onBleConnectDisconnect();
 
-                if( connect_count==0 ){
+                LogUtils.d(TAG, "DISCONNECTED connect_count: " + connect_count);
+                if(connect_count == 0){
                 	connect_count =1;
                     Message message = new Message();
                     message.what = 1;
@@ -417,7 +422,6 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
         message.what = 1;
         handler.sendMessage(message);
 
-        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         if (mBluetoothLeService != null) {
             final boolean result = mBluetoothLeService.connect(ApplicationStaticValues.deviceAddress);
             LogUtils.d(TAG, "Connect request result=" + result);
@@ -429,9 +433,16 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
         get_pass();
     }
     
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	LogUtils.d(TAG, "onResume");
+    	registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+    }
+    
     public void enable_pass()
     {
-		 mBluetoothLeService.Delay_ms( 100 ); 
+		 mBluetoothLeService.Delay_ms(100); 
 		 mBluetoothLeService.set_APP_PASSWORD( password_value );
     }
     String password_value = "123456";
@@ -607,19 +618,21 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.d(TAG, "onPause");
         //unregisterReceiver(mGattUpdateReceiver);
         //mBluetoothLeService.disconnect();
+        if (mGattUpdateReceiver != null){
+            unregisterReceiver(mGattUpdateReceiver);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.d(TAG, "onDestroy");
 //        unbindService(mServiceConnection);
 //        mBluetoothLeService.disconnect();
 //        mBluetoothLeService = null;
-        if (mGattUpdateReceiver != null){
-            unregisterReceiver(mGattUpdateReceiver);
-        }
     }
 
 //    @Override

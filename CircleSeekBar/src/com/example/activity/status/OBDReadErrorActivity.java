@@ -101,6 +101,7 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
 
     @Override
     protected void onMessageReceive(String msg) {
+    	super.onMessageReceive(msg);
         BleReceiveParsedModel receiveParsedModel = new BleReceiveParsedModel(msg);
         if (BleCommandManager.Sender.COMMAND_READ_ERROR_COUNT.contains(receiveParsedModel.getSendCmd())){
             try{

@@ -12,7 +12,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +21,12 @@ import android.widget.TextView;
 
 //import com.example.jdy_type.Get_type;
 import com.example.jdy_type.JDY_type;
+import com.example.utils.LogUtils;
 import com.lee.circleseekbar.R;
 
 public class DeviceListAdapter extends Activity
 {
+	private static final String TAG = "DeviceListAdapter";
 	int list_select_index = 0;
 	
 //	Get_type mGet_type;
@@ -40,11 +41,11 @@ public class DeviceListAdapter extends Activity
 		public String ibeacon_MAJOR = "";
 		public String ibeacon_MINOR = "";
 		
-		public byte sensor_temp;//´«¸ÐÆ÷ÎÂ¶ÈÖµÊ®Áù½øÖÆ¸ñÊ½-----1byte
-		public byte sensor_humid;//´«¸ÐÆ÷Êª¶ÈÖµ Ê®Áù½øÖÆ¸ñÊ½-----1byte
+		public byte sensor_temp;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¶ï¿½ÖµÊ®ï¿½ï¿½ï¿½ï¿½ï¿½Æ¸ï¿½Ê½-----1byte
+		public byte sensor_humid;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êªï¿½ï¿½Öµ Ê®ï¿½ï¿½ï¿½ï¿½ï¿½Æ¸ï¿½Ê½-----1byte
 		
-		public byte sensor_batt;//´«¸ÐÆ÷µçÁ¿Ê®Áù½øÖÆ¸ñÊ½-----1byte
-		public byte[] sensor_VID;//´«¸ÐÆ÷³§¼ÒÊ¶±ðÂëÊ®Áù½øÖÆ¸ñÊ½-----2byte
+		public byte sensor_batt;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½Æ¸ï¿½Ê½-----1byte
+		public byte[] sensor_VID;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½Æ¸ï¿½Ê½-----2byte
 		
 		
 		public JDY_type DEV_TYPE ;
@@ -73,11 +74,11 @@ public class DeviceListAdapter extends Activity
 			//Log.d( "scan_byte_bit_0=",""+ str);
 			*/
 			
-			byte m1 = (byte)((p[18+2]+1)^0x11);////Í¸´«Ä£¿éÃÜÂëÎ»ÅÐ¶Ï
+			byte m1 = (byte)((p[18+2]+1)^0x11);////Í¸ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ð¶ï¿½
 			str = String.format( "%02x", m1 );
 			//Log.d( "out_1","="+ str);
 			
-			byte m2 = (byte)((p[17+2]+1)^0x22);//Í¸´«Ä£¿éÃÜÂëÎ»ÅÐ¶Ï
+			byte m2 = (byte)((p[17+2]+1)^0x22);//Í¸ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ð¶ï¿½
 			str = String.format( "%02x", m2 );
 			//Log.d( "out_2","="+ str);
 			
@@ -118,14 +119,14 @@ public class DeviceListAdapter extends Activity
 				 byte[] WriteBytes = new byte[4];
 				 WriteBytes[0]=p[19-6];
 				 WriteBytes[1]=p[20-6];
-				Log.d( "out_1","TC"+list_cell_0.bytesToHexString1( WriteBytes ) );
+				 LogUtils.d(TAG, "out_1 TC"+list_cell_0.bytesToHexString1( WriteBytes ) );
 				
-				if( p[20-6]==(byte)0xa0 )return JDY_type.JDY;//Í¸´«
-				else if( p[20-6]==(byte)0xa5 )return JDY_type.JDY_AMQ;//°´Ä¦Æ÷
-				else if( p[20-6]==(byte)0xb1 )return JDY_type.JDY_LED1;// LEDµÆ
-				else if( p[20-6]==(byte)0xb2 )return JDY_type.JDY_LED2;// LEDµÆ
-				else if( p[20-6]==(byte)0xc4 )return JDY_type.JDY_KG;// ¿ª¹Ø¿ØÖÆ
-				else if( p[20-6]==(byte)0xc5 )return JDY_type.JDY_KG1;// ¿ª¹Ø¿ØÖÆ
+				if( p[20-6]==(byte)0xa0 )return JDY_type.JDY;//Í¸ï¿½ï¿½
+				else if( p[20-6]==(byte)0xa5 )return JDY_type.JDY_AMQ;//ï¿½ï¿½Ä¦ï¿½ï¿½
+				else if( p[20-6]==(byte)0xb1 )return JDY_type.JDY_LED1;// LEDï¿½ï¿½
+				else if( p[20-6]==(byte)0xb2 )return JDY_type.JDY_LED2;// LEDï¿½ï¿½
+				else if( p[20-6]==(byte)0xc4 )return JDY_type.JDY_KG;// ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½ï¿½
+				else if( p[20-6]==(byte)0xc5 )return JDY_type.JDY_KG1;// ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½ï¿½
 				
 				//Log.d( "JDY_type.JDY=","1");
 				return JDY_type.JDY;
@@ -149,15 +150,15 @@ public class DeviceListAdapter extends Activity
 //				 Log.d( "JDY_type.JDY_19=","IB"+list_cell_0.bytesToHexString1( WriteBytes1 ) );
 				/*
 				if( p[57]==(byte)0xe0 ){return JDY_type.JDY_iBeacon;}//iBeaconÄ£Ê½
-				else if( p[57]==(byte)0xe1 ){return JDY_type.sensor_temp;}////ÎÂ¶È´«¸ÐÆ÷
-				else if( p[57]==(byte)0xe2 ){return JDY_type.sensor_humid;}////Êª¶È´«¸ÐÆ÷
-				else if( p[57]==(byte)0xe3 ){return JDY_type.sensor_temp_humid;}////ÊªÊª¶È´«¸ÐÆ÷
-				else if( p[57]==(byte)0xe4 ){return JDY_type.sensor_fanxiangji;}////·¼Ïã»úÏãË®ÓÃÁ¿ÏÔÊ¾ÒÇ
-				else if( p[57]==(byte)0xe5 ){return JDY_type.sensor_zhilanshuibiao;}////ÖÇÄÜË®±í´«¸ÐÆ÷£¬³­±íÒÇ
-				else if( p[57]==(byte)0xe6 ){return JDY_type.sensor_dianyabiao;}////µçÑ¹´«¸ÐÆ÷
-				else if( p[57]==(byte)0xe7 ){return JDY_type.sensor_dianliu;}////µçÁ÷´«¸ÐÆ÷
-				else if( p[57]==(byte)0xe8 ){return JDY_type.sensor_zhonglian;}////³ÆÖØ´«¸ÐÆ÷
-				else if( p[57]==(byte)0xe9 ){return JDY_type.sensor_pm2_5;}////PM2.5´«¸ÐÆ÷
+				else if( p[57]==(byte)0xe1 ){return JDY_type.sensor_temp;}////ï¿½Â¶È´ï¿½ï¿½ï¿½ï¿½ï¿½
+				else if( p[57]==(byte)0xe2 ){return JDY_type.sensor_humid;}////Êªï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½
+				else if( p[57]==(byte)0xe3 ){return JDY_type.sensor_temp_humid;}////ÊªÊªï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½
+				else if( p[57]==(byte)0xe4 ){return JDY_type.sensor_fanxiangji;}////ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½
+				else if( p[57]==(byte)0xe5 ){return JDY_type.sensor_zhilanshuibiao;}////ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				else if( p[57]==(byte)0xe6 ){return JDY_type.sensor_dianyabiao;}////ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				else if( p[57]==(byte)0xe7 ){return JDY_type.sensor_dianliu;}////ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				else if( p[57]==(byte)0xe8 ){return JDY_type.sensor_zhonglian;}////ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½
+				else if( p[57]==(byte)0xe9 ){return JDY_type.sensor_pm2_5;}////PM2.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				*/
 				 return JDY_type.JDY_iBeacon;
 			}
@@ -180,7 +181,7 @@ public class DeviceListAdapter extends Activity
 		context = context1;
         list_cell_0 = new DeviceListAdapter1();
 //        mGet_type = new Get_type();
-        timer.schedule(task, 1000, 1000); // 1sºóÖ´ÐÐtask,¾­¹ý1sÔÙ´ÎÖ´ÐÐ  
+        timer.schedule(task, 1000, 1000); // 1sï¿½ï¿½Ö´ï¿½ï¿½task,ï¿½ï¿½ï¿½ï¿½1sï¿½Ù´ï¿½Ö´ï¿½ï¿½  
 	}
 	  Handler handler = new Handler() {  
 	        public void handleMessage(Message msg) {  
@@ -198,7 +199,7 @@ public class DeviceListAdapter extends Activity
 	  
 	        @Override  
 	        public void run() {  
-	            // ÐèÒª×öµÄÊÂ:·¢ËÍÏûÏ¢  
+	            // ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢  
 	            Message message = new Message();  
 	            message.what = 1;  
 	            handler.sendMessage(message);  
@@ -221,7 +222,9 @@ public class DeviceListAdapter extends Activity
 	
 	public JDY_type get_item_type( int pos )
 	{
-		return list_cell_0.dev_type.get( pos );
+		JDY_type type = list_cell_0.dev_type.get( pos );
+		LogUtils.d(TAG, "get_item_type: " + type + " pos: " + pos);
+		return type;
 	}
 	public int get_count( )
 	{
@@ -325,7 +328,7 @@ public class DeviceListAdapter extends Activity
 	{
 		list_cell_0.clear();
 	}
-	public void scan_jdy_ble( Boolean p )//É¨ÃèBLEÀ¶ÑÀ
+	public void scan_jdy_ble( Boolean p )//É¨ï¿½ï¿½BLEï¿½ï¿½ï¿½ï¿½
 	{
 		if( p )
 		{
@@ -471,7 +474,7 @@ public class DeviceListAdapter extends Activity
 			if( position<=dev_ble.size()  )
 			{
 				JDY_type type_0 = dev_type.get( position );
-				if( type_0==JDY_type.JDY )//Îª±ê×¼Í¸´«Ä£¿é
+				if( type_0==JDY_type.JDY )//ä¸ºæ ‡å‡†é€ä¼ æ¨¡å—
 				{
 					//Log.d( "JDY_type.JDY=","1000");
 					// if (convertView == null) 
@@ -509,7 +512,7 @@ public class DeviceListAdapter extends Activity
 						viewHolder.device_rssi.setText( rssi_00 );
 					
 					String tp = null;
-					tp = "Type:" + "±ê×¼Ä£Ê½";
+					tp = "Type:" + "æ ‡å‡†æ¨¡å¼";
 					if( viewHolder.type0!=null )
 						viewHolder.type0.setText( tp );
 					
@@ -517,7 +520,7 @@ public class DeviceListAdapter extends Activity
 						viewHolder.scan_data.setText( "scanRecord:"+bytesToHexString1(dev_scan_data.get( position )) );
 					
 				}
-				else if( type_0==JDY_type.JDY_iBeacon )//ÎªiBeaconÉè±¸
+				else if( type_0==JDY_type.JDY_iBeacon )//ä¸ºiBeaconè®¾å¤‡
 				{
 					//Log.d( "JDY_type.JDY_iBeacon=","1001");
 						//if (convertView == null) 
@@ -562,7 +565,7 @@ public class DeviceListAdapter extends Activity
 					
 					list_select_index=2;
 				}
-				else if( type_0==JDY_type.sensor_temp )//Îª´«¸ÐÆ÷Éè±¸
+				else if( type_0==JDY_type.sensor_temp )//ä¸ºä¼ æ„Ÿå™¨è®¾å¤‡
 				{
 					
 					//Log.d( "JDY_type.JDY_iBeacon=","1002");
@@ -630,7 +633,7 @@ public class DeviceListAdapter extends Activity
 					}
 					
 				}
-				else if( type_0==JDY_type.JDY_LED1 )//ÎªRGB LEDµÆÌõÉè±¸
+				else if( type_0==JDY_type.JDY_LED1 )//ä¸ºRGB LEDç¯æ¡è®¾å¤‡
 				{
 				//  switch_name,switch_mac,switch_rssi,switch_type;
 					{
@@ -661,15 +664,15 @@ public class DeviceListAdapter extends Activity
 					if( viewHolder.led_type113!=null )
 					{	
 						String tp = "";
-						tp = "Type:" + "LEDµÆ´ø";
+						tp = "Type:" + "LEDç¯å¸¦";
 						viewHolder.led_type113.setText( tp );
 					}
 				}
-				else if( type_0==JDY_type.JDY_LED2 )//ÎªRGB LEDµÆÌõÉè±¸
+				else if( type_0==JDY_type.JDY_LED2 )//ä¸ºRGB LEDç¯æ¡è®¾å¤‡
 				{
 					
 				}
-				else if( type_0==JDY_type.JDY_AMQ )//Îª°´Ä¦Æ÷Éè±¸
+				else if( type_0==JDY_type.JDY_AMQ )//ä¸ºæŒ‰æ‘©å™¨è®¾å¤‡
 				{
 					//  switch_name,switch_mac,switch_rssi,switch_type;
 					{
@@ -700,11 +703,11 @@ public class DeviceListAdapter extends Activity
 					if( viewHolder.massager_type113!=null )
 					{	
 						String tp = "";
-						tp = "Type:" + "AV°ô";
+						tp = "Type:" + "AVæ£’";
 						viewHolder.massager_type113.setText( tp );
 					}
 				}
-				else if( type_0==JDY_type.JDY_KG )//Îª¼ÌµçÆ÷¿ØÖÆ¡¢IO¿ØÖÆµÈÉè±¸
+				else if( type_0==JDY_type.JDY_KG )//ä¸ºç»§ç”µå™¨æŽ§åˆ¶ã€IOæŽ§åˆ¶ç­‰è®¾å¤‡
 				{
 					//  switch_name,switch_mac,switch_rssi,switch_type;
 					{
@@ -735,7 +738,7 @@ public class DeviceListAdapter extends Activity
 					if( viewHolder.switch_type113!=null )
 					{	
 						String tp = "";
-						tp = "Type:" + "¿ª¹Ø¿ØÖÆÆ÷";
+						tp = "Type:" + "å¼€å…³æŽ§åˆ¶å™¨";
 						viewHolder.switch_type113.setText( tp );
 					}
 //					if( viewHolder.type_imageView2!=null )
@@ -744,7 +747,7 @@ public class DeviceListAdapter extends Activity
 //					}
 					
 				}
-				else if( type_0==JDY_type.JDY_KG1 )//Îª¼ÌµçÆ÷¿ØÖÆ¡¢IO¿ØÖÆµÈÉè±¸
+				else if( type_0==JDY_type.JDY_KG1 )//ä¸ºç»§ç”µå™¨æŽ§åˆ¶ã€IOæŽ§åˆ¶ç­‰è®¾å¤‡
 				{
 					//  switch_name,switch_mac,switch_rssi,switch_type;
 					{
@@ -775,12 +778,12 @@ public class DeviceListAdapter extends Activity
 					if( viewHolder.switch_type113!=null )
 					{	
 						String tp = "";
-						tp = "Type:" + "Éý½µ»ú¿ØÖÆÆ÷";
+						tp = "Type:" + "å‡é™æœºæŽ§åˆ¶å™¨";
 						viewHolder.switch_type113.setText( tp );
 					}
 					
 				}
-				else if( type_0==JDY_type.JDY_WMQ )//ÎªÎÆÃ¼Æ÷Éè±¸
+				else if( type_0==JDY_type.JDY_WMQ )//ä¸ºçº¹çœ‰å™¨è®¾å¤‡
 				{
 				//  switch_name,switch_mac,switch_rssi,switch_type;
 					{
@@ -813,7 +816,7 @@ public class DeviceListAdapter extends Activity
 					if( viewHolder.switch_type113!=null )
 					{	
 						String tp = "";
-						tp = "Type:" + "¿ª¹Ø¿ØÖÆÆ÷";
+						tp = "Type:" + "å¼€å…³æŽ§åˆ¶å™¨";
 						viewHolder.switch_type113.setText( tp );
 					}
 					if( viewHolder.type_imageView2!=null )
@@ -821,7 +824,7 @@ public class DeviceListAdapter extends Activity
 						viewHolder.type_imageView2.setImageDrawable(getResources().getDrawable(R.drawable.massager_img));
 					}
 				}
-				else if( type_0==JDY_type.JDY_LOCK )//ÎªÀ¶ÑÀµç×ÓËøÉè±¸
+				else if( type_0==JDY_type.JDY_LOCK )//ä¸ºè“ç‰™ç”µå­é”è®¾å¤‡
 				{
 					
 				}else{
@@ -945,10 +948,10 @@ public class DeviceListAdapter extends Activity
 		
 		  public int byteArrayToInt1(byte[] bytes) {
               int value= 0;
-              //ÓÉ¸ßÎ»µ½µÍÎ»
+              //ï¿½É¸ï¿½Î»ï¿½ï¿½ï¿½ï¿½Î»
               for (int i = 0; i < 4; i++) {
                   int shift= (4 - 1 - i) * 8;
-                  value +=(bytes[i] & 0x000000FF) << shift;//Íù¸ßÎ»ÓÎ
+                  value +=(bytes[i] & 0x000000FF) << shift;//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
               }
               return value;
         }
@@ -980,7 +983,7 @@ public class DeviceListAdapter extends Activity
 	}
 
 	class ViewHolder {
-		TextView tv_devName, tv_devAddress,device_rssi,type0,scan_data;//Í¸´« 
+		TextView tv_devName, tv_devAddress,device_rssi,type0,scan_data;//Í¸ï¿½ï¿½ 
 		TextView ibeacon_name,ibeacon_mac,ibeacon_uuid,ibeacon_major,ibeacon_minor,ibeacon_rssi;//ibeacon
 		TextView sensor_name,sensor_mac,sensor_rssi,sensor_type0,sensor_temp,sensor_humid,sensor_batt;//ibeacon
 		TextView switch_name,switch_mac,switch_rssi,switch_type113;

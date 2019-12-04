@@ -36,7 +36,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +48,7 @@ import android.widget.ToggleButton;
 
 import com.example.ble.BluetoothLeService;
 import com.example.jdy_touchuang.jdy_Activity;
+import com.example.utils.LogUtils;
 import com.lee.circleseekbar.R;
 
 /**
@@ -112,7 +112,7 @@ public class jdy_ibeacon_Activity extends Activity {
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             if (!mBluetoothLeService.initialize()) {
-                Log.e(TAG, "Unable to initialize Bluetooth");
+            	LogUtils.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
             // Automatically connects to the device upon successful start-up initialization.
@@ -154,14 +154,14 @@ public class jdy_ibeacon_Activity extends Activity {
                 // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } 
-            else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) //½ÓÊÕFFE1´®¿ÚÍ¸´«Êý¾ÝÍ¨µÀÊý¾Ý
+            else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) //ï¿½ï¿½ï¿½ï¿½FFE1ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             {
                 //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             	//byte data1;
             	//intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);//  .getByteExtra(BluetoothLeService.EXTRA_DATA, data1);
                 displayData( intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA) );
             } 
-            else if (BluetoothLeService.ACTION_DATA_AVAILABLE1.equals(action)) //½ÓÊÕFFE2¹¦ÄÜÅäÖÃ·µ»ØµÄÊý¾Ý
+            else if (BluetoothLeService.ACTION_DATA_AVAILABLE1.equals(action)) //ï¿½ï¿½ï¿½ï¿½FFE2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
             {
                 displayData1( intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA1) );
             }
@@ -222,9 +222,9 @@ public class jdy_ibeacon_Activity extends Activity {
     EditText dev_Name;
     Button name_button;
     
-    EditText password_ed;//ÃÜÂëÖµ
-    Button password_enable_bt;//ÃÜÂë¿ª¹Ø
-    Button password_wrt;//ÃÜÂëÐ´ÈëButton
+    EditText password_ed;//ï¿½ï¿½ï¿½ï¿½Öµ
+    Button password_enable_bt;//ï¿½ï¿½ï¿½ë¿ªï¿½ï¿½
+    Button password_wrt;//ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Button
     
     Button adv_time1,adv_time2,adv_time3,adv_time4;
     
@@ -243,15 +243,15 @@ public class jdy_ibeacon_Activity extends Activity {
     EditText ib_uuid_text;//ibeacon uuid
     EditText ib_mayjor_text;//ibeacon major
     EditText ib_minor_text;//ibeacon minor
-    EditText pass_value;//µ±Ç°Éè±¸ÃÜÂë
-    EditText new_pass_value;//ÐÂÃÜÂë
-    Button password_write;//ÃÜÂëÐ´Èë°´Å¥
-    Button ib_button,set_dev_name;//ÅäÖÃ²ÎÊý°´Å¥
+    EditText pass_value;//ï¿½ï¿½Ç°ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+    EditText new_pass_value;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    Button password_write;//ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ë°´Å¥
+    Button ib_button,set_dev_name;//ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½Å¥
     
     private int[] color_arry;  
     
-    String dev_password = "123456";//Éè±¸Ä¬ÈÏ³ö³§ÃÜÂëÎª 123456
-    String current_dev_password = "123456";//µ±Ç°APP ÃÜÂë
+    String dev_password = "123456";//ï¿½è±¸Ä¬ï¿½Ï³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª 123456
+    String current_dev_password = "123456";//ï¿½ï¿½Ç°APP ï¿½ï¿½ï¿½ï¿½
     String new_dev_password = "";
     
     TextView set_name_success_id,set_password_success_id,set_major_success_id,set_minor_success_id,set_uuid_success_id;
@@ -290,24 +290,24 @@ public class jdy_ibeacon_Activity extends Activity {
         //color_arry=new int[]{R.color.gray,R.color.bule,R.color.green,R.color.yellow}; 
         //int myColor=getResources().getColor(color_arry[0]);  
         
-        device_address = (TextView)findViewById(R.id.device_address);//mac µØÖ·
-        ib_name_text = (EditText)findViewById(R.id.ib_name_text);//Éè±¸Ãû
+        device_address = (TextView)findViewById(R.id.device_address);//mac ï¿½ï¿½Ö·
+        ib_name_text = (EditText)findViewById(R.id.ib_name_text);//ï¿½è±¸ï¿½ï¿½
         ib_uuid_text = (EditText)findViewById(R.id.ib_uuid_text);//ibeacon uuid
         ib_mayjor_text = (EditText)findViewById(R.id.ib_mayjor_text);//ibeacon major
         ib_minor_text = (EditText)findViewById(R.id.ib_minor_text);//ibeacon minor
-        pass_value = (EditText)findViewById(R.id.pass_value);//µ±Ç°Éè±¸ÃÜÂë
-        new_pass_value = (EditText)findViewById(R.id.new_pass_value);//ÐÂÃÜÂë
-        password_write = (Button)findViewById(R.id.password_write);//ÃÜÂëÐ´Èë°´Å¥
+        pass_value = (EditText)findViewById(R.id.pass_value);//ï¿½ï¿½Ç°ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+        new_pass_value = (EditText)findViewById(R.id.new_pass_value);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        password_write = (Button)findViewById(R.id.password_write);//ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ë°´Å¥
         //password_write.setTextColor(myColor);  
         
-        ib_button = (Button)findViewById(R.id.ib_button);//ÅäÖÃ°´Å¥
+        ib_button = (Button)findViewById(R.id.ib_button);//ï¿½ï¿½ï¿½Ã°ï¿½Å¥
         //ib_button.setTextColor(myColor);  
         
-        set_dev_name = (Button)findViewById(R.id.set_dev_name);//¸üÐÂÀ¶ÑÀÃû
+        set_dev_name = (Button)findViewById(R.id.set_dev_name);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         
-        set_dev_name.setOnClickListener( listener );//ÅäÖÃ°´Å¥
-        password_write.setOnClickListener( listener );///ÃÜÂëÐ´Èë°´Å¥
-        ib_button.setOnClickListener( listener );//ÅäÖÃ°´Å¥
+        set_dev_name.setOnClickListener( listener );//ï¿½ï¿½ï¿½Ã°ï¿½Å¥
+        password_write.setOnClickListener( listener );///ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ë°´Å¥
+        ib_button.setOnClickListener( listener );//ï¿½ï¿½ï¿½Ã°ï¿½Å¥
         
         
         final Intent intent = getIntent();
@@ -353,10 +353,10 @@ public class jdy_ibeacon_Activity extends Activity {
         
         
         send_button=(Button)findViewById(R.id.tx_button);//send data 1002
-        send_button.setOnClickListener(listener);//ÉèÖÃ¼àÌý  
+        send_button.setOnClickListener(listener);//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
         
         clear_button=(Button)findViewById(R.id.clear_button);//send data 1002
-        clear_button.setOnClickListener(listener);//ÉèÖÃ¼àÌý  
+        clear_button.setOnClickListener(listener);//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
         
         txd_txt=(EditText)findViewById(R.id.tx_text);//1002 data
         txd_txt.setText("0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A");
@@ -370,10 +370,10 @@ public class jdy_ibeacon_Activity extends Activity {
         key3 = (ToggleButton)findViewById(R.id.toggleButton3);
         key4 = (ToggleButton)findViewById(R.id.toggleButton4);
         
-        key1.setOnClickListener( OnClickListener_listener );//ÉèÖÃ¼àÌý  
-        key2.setOnClickListener( OnClickListener_listener );//ÉèÖÃ¼àÌý  
-        key3.setOnClickListener( OnClickListener_listener );//ÉèÖÃ¼àÌý  
-        key4.setOnClickListener( OnClickListener_listener );//ÉèÖÃ¼àÌý  
+        key1.setOnClickListener( OnClickListener_listener );//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
+        key2.setOnClickListener( OnClickListener_listener );//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
+        key3.setOnClickListener( OnClickListener_listener );//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
+        key4.setOnClickListener( OnClickListener_listener );//ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½  
         
         
         sbValues = new StringBuffer();
@@ -383,13 +383,13 @@ public class jdy_ibeacon_Activity extends Activity {
         mHandler = new Handler();
         
         
-        //timer.schedule(task, 500, 500); // 1sºóÖ´ÐÐtask,¾­¹ý1sÔÙ´ÎÖ´ÐÐ  
+        //timer.schedule(task, 500, 500); // 1sï¿½ï¿½Ö´ï¿½ï¿½task,ï¿½ï¿½ï¿½ï¿½1sï¿½Ù´ï¿½Ö´ï¿½ï¿½  
         
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         if (mBluetoothLeService != null) {
         	
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-            Log.d(TAG, "Connect request result=" + result);
+            LogUtils.d(TAG, "Connect request result=" + result);
         }
        // boolean sg;
         getActionBar().setTitle(mDeviceName+"   iBeacon");
@@ -428,28 +428,28 @@ public class jdy_ibeacon_Activity extends Activity {
         }else password_value = "123456" ;
         
     }
-	//---------------------------------------------------------------------------------Ó¦ÓÃÓÚ´æ´¢Ñ¡ÔñTABµÄÁÐ±íindex
+	//---------------------------------------------------------------------------------Ó¦ï¿½ï¿½ï¿½Ú´æ´¢Ñ¡ï¿½ï¿½TABï¿½ï¿½ï¿½Ð±ï¿½index
 	public String getSharedPreference(String key) 
 	{
-		//Í¬Ñù£¬ÔÚ¶ÁÈ¡SharedPreferencesÊý¾ÝÇ°ÒªÊµÀý»¯³öÒ»¸öSharedPreferences¶ÔÏó 
+		//Í¬ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½È¡SharedPreferencesï¿½ï¿½ï¿½ï¿½Ç°ÒªÊµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½SharedPreferencesï¿½ï¿½ï¿½ï¿½ 
 		SharedPreferences sharedPreferences= getSharedPreferences("test", 
 		Activity.MODE_PRIVATE); 
-		// Ê¹ÓÃgetString·½·¨»ñµÃvalue£¬×¢ÒâµÚ2¸ö²ÎÊýÊÇvalueµÄÄ¬ÈÏÖµ 
+		// Ê¹ï¿½ï¿½getStringï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½valueï¿½ï¿½×¢ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½valueï¿½ï¿½Ä¬ï¿½ï¿½Öµ 
 		String name =sharedPreferences.getString(key, ""); 
 		return name;
 	}
 	public void setSharedPreference(String key, String values) 
 	{
-		//ÊµÀý»¯SharedPreferences¶ÔÏó£¨µÚÒ»²½£© 
+		//Êµï¿½ï¿½ï¿½ï¿½SharedPreferencesï¿½ï¿½ï¿½ó£¨µï¿½Ò»ï¿½ï¿½ï¿½ï¿½ 
 		SharedPreferences mySharedPreferences= getSharedPreferences("test", 
 		Activity.MODE_PRIVATE);
-		//ÊµÀý»¯SharedPreferences.Editor¶ÔÏó£¨µÚ¶þ²½£© 
+		//Êµï¿½ï¿½ï¿½ï¿½SharedPreferences.Editorï¿½ï¿½ï¿½ó£¨µÚ¶ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		SharedPreferences.Editor editor = mySharedPreferences.edit(); 
-		//ÓÃputStringµÄ·½·¨±£´æÊý¾Ý 
+		//ï¿½ï¿½putStringï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		editor.putString(key, values ); 
-		//Ìá½»µ±Ç°Êý¾Ý 
+		//ï¿½á½»ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ 
 		editor.commit(); 
-		//Ê¹ÓÃtoastÐÅÏ¢ÌáÊ¾¿òÌáÊ¾³É¹¦Ð´ÈëÊý¾Ý 
+		//Ê¹ï¿½ï¿½toastï¿½ï¿½Ï¢ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½É¹ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		//Toast.makeText(this, values , 
 		//Toast.LENGTH_LONG).show(); 
 	}
@@ -467,7 +467,7 @@ public class jdy_ibeacon_Activity extends Activity {
                 	{
                 		//updateConnectionState(R.string.connecting);
                 		final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-                		Log.d(TAG, "Connect request result=" + result);
+                		LogUtils.d(TAG, "Connect request result=" + result);
                 	}
                 }
             	
@@ -489,7 +489,7 @@ public class jdy_ibeacon_Activity extends Activity {
     	  
         @Override  
         public void run() {  
-            // ÐèÒª×öµÄÊÂ:·¢ËÍÏûÏ¢  
+            // ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢  
             Message message = new Message();  
             message.what = 2;  
             handler.sendMessage(message);  
@@ -498,26 +498,26 @@ public class jdy_ibeacon_Activity extends Activity {
 
     
     int sele_adv=0;
-    Button.OnClickListener listener = new Button.OnClickListener(){//´´½¨¼àÌý¶ÔÏó    
+    Button.OnClickListener listener = new Button.OnClickListener(){//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    
         public void onClick(View v){
-            //String strTmp="µã»÷Button02";    
+            //String strTmp="ï¿½ï¿½ï¿½Button02";    
             //Ev1.setText(strTmp);   
         	switch( v.getId())
         	{
-        	case R.id.set_dev_name://¸üÐÂÀ¶ÑÀÃû
+        	case R.id.set_dev_name://ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         	{
         		set_name_success_id.setText( "" );
         		mBluetoothLeService.set_name( ib_name_text.getText().toString() );
         		break;
         	}
-        	case R.id.password_write ://¸ü¸ÄÃÜÂë
+        	case R.id.password_write ://ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         		if( connect_status_bit )
       		  {
         			set_password_success_id.setText( "" );
         			
 //        			if( mBluetoothLeService.set_password( pass_value.getText().toString(), new_pass_value.getText().toString() )==false )
 //        			{
-//        				Toast.makeText(jdy_ibeacon_Activity.this, "ÃÜÂë³¤¶È²»¶Ô£¬ÃÜÂë±ØÐëÎª6Î»Êý×Ö", Toast.LENGTH_SHORT).show();
+//        				Toast.makeText(jdy_ibeacon_Activity.this, "ï¿½ï¿½ï¿½ë³¤ï¿½È²ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª6Î»ï¿½ï¿½ï¿½ï¿½", Toast.LENGTH_SHORT).show();
 //        			}
         		    
         			mBluetoothLeService.set_password( pass_value.getText().toString(), new_pass_value.getText().toString() );
@@ -533,15 +533,15 @@ public class jdy_ibeacon_Activity extends Activity {
 //        	    	mBluetoothLeService.function_data( txt );
         	    	
             		//String tx_string=txd_txt.getText().toString().trim();
-            		//mBluetoothLeService.txxx( tx_string,true );//·¢ËÍ×Ö·û´®Êý¾Ý
-            		//mBluetoothLeService.txxx( tx_string,false );//·¢ËÍHEXÊý¾Ý
+            		//mBluetoothLeService.txxx( tx_string,true );//ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            		//mBluetoothLeService.txxx( tx_string,false );//ï¿½ï¿½ï¿½ï¿½HEXï¿½ï¿½ï¿½ï¿½
       		  }else{
       			  //Toast.makeText(this, "Deleted Successfully!", Toast.LENGTH_LONG).show(); 
-      			  Toast toast = Toast.makeText(jdy_ibeacon_Activity.this, "Éè±¸Ã»ÓÐÁ¬½Ó£¡", Toast.LENGTH_SHORT); 
+      			  Toast toast = Toast.makeText(jdy_ibeacon_Activity.this, "ï¿½è±¸Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½", Toast.LENGTH_SHORT); 
       			  toast.show(); 
       		  }
         		break;
-        	case R.id.ib_button://Ò»¼üÅäÖÃ
+        	case R.id.ib_button://Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         	{
         		set_major_success_id.setText( "" );
         		set_minor_success_id.setText( "" );
@@ -549,38 +549,38 @@ public class jdy_ibeacon_Activity extends Activity {
         		current_dev_password = pass_value.getText().toString();
         		if( dev_password.equals( current_dev_password ) )
         		{
-        			if( current_uuid.equals( ib_uuid_text.getText().toString() ) )//ÏàÍ¬²»¸üÐÂ
+        			if( current_uuid.equals( ib_uuid_text.getText().toString() ) )//ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         			{
-        				set_uuid_success_id.setText( "ÊäÈëµÄiBeacon UUIDÓëµ±Ç°Éè±¸UUIDÏàÍ¬ÎÞÐè¸üÐÂ" );
-        			}else//²»ÏàÍ¬¸üÐÂ
+        				set_uuid_success_id.setText( "ï¿½ï¿½ï¿½ï¿½ï¿½iBeacon UUIDï¿½ëµ±Ç°ï¿½è±¸UUIDï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" );
+        			}else//ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½
         			{
         				if( mBluetoothLeService.set_ibeacon_UUID( ib_uuid_text.getText().toString() )==false )
-        					set_uuid_success_id.setText( "ÊäÈëµÄiBeacon UUID¸ñÊ½ÓÐ´í£¡" );
+        					set_uuid_success_id.setText( "ï¿½ï¿½ï¿½ï¿½ï¿½iBeacon UUIDï¿½ï¿½Ê½ï¿½Ð´ï¿½" );
         			}
         			
         			mBluetoothLeService.Delay_ms( 20);
-        			if( current_major.equals( ib_mayjor_text.getText().toString() ) )//ÏàÍ¬²»¸üÐÂ
+        			if( current_major.equals( ib_mayjor_text.getText().toString() ) )//ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         			{
-        				set_major_success_id.setText( "ÊäÈëµÄiBeacon majorÓëµ±Ç°Éè±¸majorÏàÍ¬ÎÞÐè¸üÐÂ" );
-        			}else//²»ÏàÍ¬¸üÐÂ
+        				set_major_success_id.setText( "ï¿½ï¿½ï¿½ï¿½ï¿½iBeacon majorï¿½ëµ±Ç°ï¿½è±¸majorï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" );
+        			}else//ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½
         			{
         				if( mBluetoothLeService.set_ibeacon_MAJOR( ib_mayjor_text.getText().toString() )==false )
-        					set_major_success_id.setText( "iBeacon MajorÖµ²»ÄÜÎª¿Õ" );
+        					set_major_success_id.setText( "iBeacon MajorÖµï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½" );
         			}
         			
         			mBluetoothLeService.Delay_ms( 20);
-        			if( current_minor.equals( ib_minor_text.getText().toString() ) )//ÏàÍ¬²»¸üÐÂ
+        			if( current_minor.equals( ib_minor_text.getText().toString() ) )//ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         			{
-        				set_minor_success_id.setText( "ÊäÈëµÄiBeacon minorÓëµ±Ç°Éè±¸minorÏàÍ¬ÎÞÐè¸üÐÂ" );
-        			}else//²»ÏàÍ¬¸üÐÂ
+        				set_minor_success_id.setText( "ï¿½ï¿½ï¿½ï¿½ï¿½iBeacon minorï¿½ëµ±Ç°ï¿½è±¸minorï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" );
+        			}else//ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½
         			{
         				if( mBluetoothLeService.set_ibeacon_MIMOR( ib_minor_text.getText().toString() )==false )
-        					set_minor_success_id.setText( "iBeacon MinorÖµ²»ÄÜÎª¿Õ" );
+        					set_minor_success_id.setText( "iBeacon MinorÖµï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½" );
         			}
         	
         		}else
         		{
-        			set_major_success_id.setText( "APPÃÜÂëÓëÉè±¸ÃÜÂë²»·û£¡" );
+        			set_major_success_id.setText( "APPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ë²»ï¿½ï¿½ï¿½ï¿½" );
         		}
         		
 
@@ -649,7 +649,7 @@ public class jdy_ibeacon_Activity extends Activity {
 //    }
 String da="";
 int len_g = 0;
-    private void displayData( byte[] data1 ) //½ÓÊÕFFE1´®¿ÚÍ¸´«Êý¾ÝÍ¨µÀÊý¾Ý
+    private void displayData( byte[] data1 ) //ï¿½ï¿½ï¿½ï¿½FFE1ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
 		//String head1,data_0;
 		/*
@@ -681,47 +681,47 @@ int len_g = 0;
     	}
     	
     }
-    private void displayData1( byte[] data1 ) //½ÓÊÕFFE2¹¦ÄÜÅäÖÃ·µ»ØµÄÊý¾Ý
+    private void displayData1( byte[] data1 ) //ï¿½ï¿½ï¿½ï¿½FFE2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
     {
-    	String str1 = mBluetoothLeService.bytesToHexString1( data1,0 );//½«½ÓÊÕµÄÊ®Áù½øÖÆÊý¾Ý×ª»»³ÉÊ®Áù½øÖÆ×Ö·û´®
+    	String str1 = mBluetoothLeService.bytesToHexString1( data1,0 );//ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
     	//String str2 = mBluetoothLeService.byte_to_String( data1,1 );
     	
     	//Toast.makeText(jdy_ibeacon_Activity.this, "function_rx:"+str1, Toast.LENGTH_SHORT).show(); 
     	
-    	if( data1.length==2&&data1[0]==(byte) 0x51 )//¸üÐÂÃÜÂë³É¹¦
+    	if( data1.length==2&&data1[0]==(byte) 0x51 )//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½
     	{
     		if(data1[1]==(byte) 0x01)
     		{
-    			set_password_success_id.setText( "ÃÜÂë¸üÐÂ³É¹¦" );
-    			//Toast.makeText(jdy_ibeacon_Activity.this, "ÃÜÂë¸üÐÂ³É¹¦", Toast.LENGTH_SHORT).show(); 
+    			set_password_success_id.setText( "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â³É¹ï¿½" );
+    			//Toast.makeText(jdy_ibeacon_Activity.this, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â³É¹ï¿½", Toast.LENGTH_SHORT).show(); 
     		}
     		else 
     		{
-    			set_password_success_id.setText( "ÃÜÂë¸üÐÂÊ§°Ü" );
-    			//Toast.makeText(jdy_ibeacon_Activity.this, "ÃÜÂë¸üÐÂ³É¹¦", Toast.LENGTH_SHORT).show(); 
+    			set_password_success_id.setText( "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½" );
+    			//Toast.makeText(jdy_ibeacon_Activity.this, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â³É¹ï¿½", Toast.LENGTH_SHORT).show(); 
     		}
     	}
-    	else if( data1.length==7&&data1[0]==(byte) 0x52 )//¶ÁÈ¡ÃÜÂë
+    	else if( data1.length==7&&data1[0]==(byte) 0x52 )//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
     	{
     		dev_password = mBluetoothLeService.byte_to_String( data1,1 );
     		//Toast.makeText(jdy_ibeacon_Activity.this, "function_rx:"+current_dev_password, Toast.LENGTH_SHORT).show(); 
     	}
-    	else if( data1.length==2&&data1[0]==(byte) 0x61&&data1[1]==(byte) 0x01 )//¸üÐÂÀ¶ÑÀÃû³É¹¦
+    	else if( data1.length==2&&data1[0]==(byte) 0x61&&data1[1]==(byte) 0x01 )//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½
     	{
-    		//Toast.makeText(jdy_ibeacon_Activity.this, "À¶ÑÀÃû¸üÐÂ³É¹¦", Toast.LENGTH_SHORT).show(); 
-    		set_name_success_id.setText( "iBeacon Ãû¸üÐÂ³É¹¦" );
+    		//Toast.makeText(jdy_ibeacon_Activity.this, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â³É¹ï¿½", Toast.LENGTH_SHORT).show(); 
+    		set_name_success_id.setText( "iBeacon ï¿½ï¿½ï¿½ï¿½ï¿½Â³É¹ï¿½" );
     	}
     	else if( data1.length==2&&data1[0]==(byte) 0x11&&data1[1]==(byte) 0x01 )//
     	{
-    		set_uuid_success_id.setText( "iBeacon uuid¸üÐÂ³É¹¦" );
+    		set_uuid_success_id.setText( "iBeacon uuidï¿½ï¿½ï¿½Â³É¹ï¿½" );
     	}
     	else if( data1.length==2&&data1[0]==(byte) 0x21&&data1[1]==(byte) 0x01 )//
     	{
-    		set_major_success_id.setText( "iBeacon Major¸üÐÂ³É¹¦" );
+    		set_major_success_id.setText( "iBeacon Majorï¿½ï¿½ï¿½Â³É¹ï¿½" );
     	}
     	else if( data1.length==2&&data1[0]==(byte) 0x31&&data1[1]==(byte) 0x01 )//
     	{
-    		set_minor_success_id.setText( "iBeacon Minor¸üÐÂ³É¹¦" );
+    		set_minor_success_id.setText( "iBeacon Minorï¿½ï¿½ï¿½Â³É¹ï¿½" );
     	}
     	
     	
@@ -735,7 +735,7 @@ int len_g = 0;
 
     	if (gattServices == null) return;
 
-        if( gattServices.size()>0&&mBluetoothLeService.get_connected_status( gattServices )==2 )//±íÊ¾ÎªJDY-06¡¢JDY-08ÏµÁÐÀ¶ÑÀÄ£¿é
+        if( gattServices.size()>0&&mBluetoothLeService.get_connected_status( gattServices )==2 )//ï¿½ï¿½Ê¾ÎªJDY-06ï¿½ï¿½JDY-08Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
         {
 	        if( connect_status_bit )
 			  {
@@ -754,17 +754,17 @@ int len_g = 0;
 //				 byte[] WriteBytes = new byte[2];
 //				 WriteBytes[0] = (byte) 0xE7;
 //				 WriteBytes[1] = (byte) 0xf6;
-//				 mBluetoothLeService.function_data( WriteBytes );// ·¢ËÍ¶ÁÈ¡ËùÓÐIO×´Ì¬
+//				 mBluetoothLeService.function_data( WriteBytes );// ï¿½ï¿½ï¿½Í¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½IO×´Ì¬
 				 mBluetoothLeService.get_password( pass_value.getText().toString() );
 				 
 				 //updateConnectionState(R.string.connected);
 			  }else{
 				  //Toast.makeText(this, "Deleted Successfully!", Toast.LENGTH_LONG).show(); 
-				  Toast toast = Toast.makeText(jdy_ibeacon_Activity.this, "Éè±¸Ã»ÓÐÁ¬½Ó£¡", Toast.LENGTH_SHORT); 
+				  Toast toast = Toast.makeText(jdy_ibeacon_Activity.this, "ï¿½è±¸Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½", Toast.LENGTH_SHORT); 
 				  toast.show(); 
 			  }
         }
-        else if( gattServices.size()>0&&mBluetoothLeService.get_connected_status( gattServices )==1 )//±íÊ¾ÎªJDY-09¡¢JDY-10ÏµÁÐÀ¶ÑÀÄ£¿é
+        else if( gattServices.size()>0&&mBluetoothLeService.get_connected_status( gattServices )==1 )//ï¿½ï¿½Ê¾ÎªJDY-09ï¿½ï¿½JDY-10Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
         {
 	        if( connect_status_bit )
 			  {
@@ -780,12 +780,12 @@ int len_g = 0;
 				// updateConnectionState(R.string.connected);
 			  }else{
 				  //Toast.makeText(this, "Deleted Successfully!", Toast.LENGTH_LONG).show(); 
-				  Toast toast = Toast.makeText(jdy_ibeacon_Activity.this, "Éè±¸Ã»ÓÐÁ¬½Ó£¡", Toast.LENGTH_SHORT); 
+				  Toast toast = Toast.makeText(jdy_ibeacon_Activity.this, "ï¿½è±¸Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½", Toast.LENGTH_SHORT); 
 				  toast.show(); 
 			  }
         }else
         {
-        	 Toast toast = Toast.makeText(jdy_ibeacon_Activity.this, "ÌáÊ¾£¡´ËÉè±¸²»ÎªJDYÏµÁÐBLEÄ£¿é", Toast.LENGTH_SHORT); 
+        	 Toast toast = Toast.makeText(jdy_ibeacon_Activity.this, "ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ÎªJDYÏµï¿½ï¿½BLEÄ£ï¿½ï¿½", Toast.LENGTH_SHORT); 
 			  toast.show(); 
         }
 //        SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(
