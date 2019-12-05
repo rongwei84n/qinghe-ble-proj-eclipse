@@ -24,6 +24,11 @@ public class BleCommandManager {
         public static final String COMMAND_READ_ERROR_8 = "F03_0116" + CMD_ENDD_TAG;//读取故障8
         public static final String COMMAND_READ_ERROR_9 = "F03_0118" + CMD_ENDD_TAG;//读取故障9
         public static final String COMMAND_READ_ERROR_10 = "F03_0120" + CMD_ENDD_TAG;//读取故障10
+        
+        //读取车辆信息
+        public static final String COMMAND_READ_CARINFO = "F10_0001_5" + CMD_ENDD_TAG;
+        public static final String COMMAND_CAR_VID = "F03_2000" + CMD_ENDD_TAG;//车辆识别号VID
+        public static final String COMMAND_STANDARD_ID = "F03_2001" + CMD_ENDD_TAG;//标定识别ID
 
         //结束指令
         public static final String COMMAND_FINISH = "F10_0001_0" + CMD_ENDD_TAG;//停止指令

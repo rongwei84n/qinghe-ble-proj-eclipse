@@ -14,7 +14,7 @@ public class BleReceiveParsedModel {
     private String sendCmd;
 
     public BleReceiveParsedModel(String result){
-        LogUtils.d(TAG, "result: " + result);
+        LogUtils.d(TAG, "BleReceiveParsedModel init: " + result);
         if (result != null){
             result = result.replaceAll("\r", "");
         }
@@ -33,10 +33,12 @@ public class BleReceiveParsedModel {
             return;
         }
         if (arrays[1].contains("ERR")){
+        	
             success = false;
         }else {
             success = true;
         }
+        LogUtils.d(TAG, "BleReceiveParsedModel init result: " + result + " success: " + success);
         String[] valuesArray = arrays[1].split("_");
         if (valuesArray == null){
             return;
