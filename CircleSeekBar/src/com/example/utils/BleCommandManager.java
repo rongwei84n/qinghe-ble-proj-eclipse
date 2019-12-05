@@ -35,6 +35,9 @@ public class BleCommandManager {
         
         //冻结数据
         public static final String COMMAND_FREZEN_DATA = "F10_0001_2" + CMD_ENDD_TAG;
+        
+        //实时数据
+        public static final String COMMAND_REAL_DATA = "F10_0001_1" + CMD_ENDD_TAG;
 
         //结束指令
         public static final String COMMAND_FINISH = "F10_0001_0" + CMD_ENDD_TAG;//停止指令

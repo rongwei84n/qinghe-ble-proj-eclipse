@@ -10,7 +10,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lee.circleseekbar.R;
-import com.example.activity.BaseActivity;
 import com.example.activity.JdyBaseActivity;
 import com.example.model.BleReceiveParsedModel;
 import com.example.model.BleSendCommandModel;
@@ -92,7 +91,7 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         }
         return null;
     }
-
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();

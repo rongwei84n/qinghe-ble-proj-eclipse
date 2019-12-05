@@ -10,16 +10,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lee.circleseekbar.R;
-import com.example.activity.BaseActivity;
+import com.example.activity.JdyBaseActivity;
+import com.example.utils.BleCommandManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /** 实时数据 */
-public class OBDRealDataActivity extends BaseActivity {
+public class OBDRealDataActivity extends JdyBaseActivity {
     private ListView mListView;
     private List<DataModel> mDataSource;
     private MyFuctionsAdapter mAdapter;
+    
+    @Override
+    public void beforeInitLayout() {
+		super.beforeInitLayout();
+		
+	}
 
     @Override
     public void initLayout(Bundle savedInstanceState) {
@@ -34,6 +41,12 @@ public class OBDRealDataActivity extends BaseActivity {
         mAdapter = new MyFuctionsAdapter();
         mListView.setAdapter(mAdapter);
     }
+    
+    @Override
+    protected void onDestroy() {
+		super.onDestroy();
+		sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
+	}
 
     private void initDataSource(){
         mDataSource = new ArrayList<DataModel>();

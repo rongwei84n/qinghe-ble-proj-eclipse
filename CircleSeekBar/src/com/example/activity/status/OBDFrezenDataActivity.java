@@ -125,6 +125,12 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         mAdapter = new MyFuctionsAdapter();
         mListView.setAdapter(mAdapter);
     }
+    
+    @Override
+    protected void onDestroy() {
+		super.onDestroy();
+		sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
+	}
 
     private void initDataSource(){
         mDataSource = new ArrayList<DataModel>();

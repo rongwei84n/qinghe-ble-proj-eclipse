@@ -175,19 +175,21 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
     // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
     //                        or notification operations.
-    protected final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+    protected BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             LogUtils.d(TAG, "mGattUpdateReceiver action: " + action);
             hideLoading();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+            	LogUtils.d(TAG, "onReceive ACTION_GATT_CONNECTED");
                 mConnected = true;
                 connect_status_bit=true;
                 invalidateOptionsMenu();
                 updateConnectionState(R.string.connected);
                 onBleConnectSuccess();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+            	LogUtils.d(TAG, "onReceive ACTION_GATT_DISCONNECTED");
                 mConnected = false;
 
                 updateConnectionState(R.string.disconnected);
@@ -206,11 +208,12 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
                 }
                 ToastUtil.show(JdyBaseActivity.this, "蓝牙断开，正在重连...");
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+            	LogUtils.d(TAG, "onReceive ACTION_GATT_SERVICES_DISCOVERED");
                 // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
-            }
-            else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) //接收FFE1串口透传数据通道数据
+            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) //接收FFE1串口透传数据通道数据
             {
+            	LogUtils.d(TAG, "onReceive ACTION_DATA_AVAILABLE");
                 //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             	//byte data1;
             	//intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);//  .getByteExtra(BluetoothLeService.EXTRA_DATA, data1);
@@ -219,6 +222,7 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE1.equals(action)) //接收FFE2功能配置返回的数据
             {
+            	LogUtils.d(TAG, "onReceive ACTION_DATA_AVAILABLE1");
                 displayData1( intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA1) );
             }
         }
@@ -437,7 +441,6 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     @Override
     protected void onResume() {
     	super.onResume();
-    	LogUtils.d(TAG, "onResume");
     	registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
     }
     

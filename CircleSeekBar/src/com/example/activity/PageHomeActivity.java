@@ -97,6 +97,7 @@ public class PageHomeActivity extends JdyBaseActivity {
     @Override
     public void afterInitView() {
         super.afterInitView();
+        
         mTvEmpty = (TextView) findViewById(R.id.tv_empty);
         mDeviceModels = DeviceLogic.getAllBleDevices(this);
         mListView = (ListView) findViewById(R.id.lv_devices_list);

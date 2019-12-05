@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 
+import com.example.logs.CrashHandler;
 import com.example.logs.LogConsoleControl;
 import com.example.logs.LogFileControl;
 import com.example.utils.LogUtils;
@@ -20,6 +21,9 @@ public class BleApplication extends Application {
         super.onCreate();
 
         initLogConfig();
+        
+        CrashHandler crashHandler=CrashHandler.getInstance();
+        crashHandler.init(this);
         
         try {
 			PackageInfo packageInfo = getApplicationContext()
