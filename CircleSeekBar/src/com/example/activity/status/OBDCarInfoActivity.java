@@ -123,8 +123,13 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
         mListView = (ListView) findViewById(R.id.lv_functionlist);
         mAdapter = new MyFuctionsAdapter();
         mListView.setAdapter(mAdapter);
-        bindBleService();
     }
+    
+    @Override
+    protected void onResume() {
+		super.onResume();
+		bindBleService();
+	}
 
     private void initDataSource(){
         mDataSource = new ArrayList<DataModel>();

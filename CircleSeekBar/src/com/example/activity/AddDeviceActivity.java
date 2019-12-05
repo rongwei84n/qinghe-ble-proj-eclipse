@@ -187,8 +187,21 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
                                         ApplicationStaticValues.deviceAddress = deviceAddress;
                                         ApplicationStaticValues.moduleId = str;
                                         
-                                        LogUtils.d(TAG, "确定添加 deviceName： " + deviceName + " deviceAddress: " + deviceAddress + " moduleId: " + str);
-                                        bindBleService();
+//                                        LogUtils.d(TAG, "确定添加 deviceName： " + deviceName + " deviceAddress: " + deviceAddress + " moduleId: " + str);
+//                                        bindBleService();
+                                        
+                                        //TODO
+                                        BleDeviceModel bleDeviceModel = new BleDeviceModel();
+                                        bleDeviceModel.setDeviceName(ApplicationStaticValues.deviceName);
+                                        bleDeviceModel.setDeviceAddress(ApplicationStaticValues.deviceAddress);
+                                        bleDeviceModel.setModuleID(ApplicationStaticValues.moduleId);
+                                        bleDeviceModel.setStatus(0);
+                                        bleDeviceModel.setCreateTime(System.currentTimeMillis()+"");
+                                        DeviceLogic.addDevice(AddDeviceActivity.this, bleDeviceModel);
+
+                                        ToastUtil.show(AddDeviceActivity.this, "连接成功");
+                                        Intent intent = new Intent(AddDeviceActivity.this, OBDHomeActivity.class);
+                                        startActivity(intent);
                                     }
                                 });
                                 builder.setNegativeButton("取消", null);

@@ -114,24 +114,25 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
 
     protected final void sendMessage(String msg){
     	LogUtils.d(TAG, "sendMessage: " + msg + " connect_status_bit: " + connect_status_bit
-    			+ " mConnected: " + mConnected);
-        if(connect_status_bit){
-            if(mConnected) {
-                tx_count += mBluetoothLeService.txxx(msg, notSendHex);//发送字符串数据
-                mTvSendCount.setText("发送数据：" + tx_count);
-                //mBluetoothLeService.txxx( tx_string,false );//发送HEX数据
-            }
+    			+ " mConnected: " + mConnected + " notSendHex: " + notSendHex);
+        if(connect_status_bit && mConnected){
+        	tx_count += mBluetoothLeService.txxx(msg, notSendHex);//发送字符串数据
+            mTvSendCount.setText("发送数据：" + tx_count);
+            //mBluetoothLeService.txxx( tx_string,false );//发送HEX数据
         }else{
-            Toast toast = Toast.makeText(JdyBaseActivity.this, "设备没有连接！", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(JdyBaseActivity.this, "设备没有连接，正在重连...", Toast.LENGTH_SHORT);
             toast.show();
+            bindBleService();
         }
     }
 
     protected final void bindBleService(){
         showLoading();
-        LogUtils.d(TAG, "bindBleService");
-        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        LogUtils.d(TAG, "bindBleService, mBluetoothLeService: " + mBluetoothLeService);
+        if (mBluetoothLeService == null) {
+        	Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+            bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+		}
     }
 
     protected void onMessageReceive(String msg){
@@ -678,6 +679,7 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
 
     //接收FFE1串口透传数据通道数据
     private void displayData( byte[] data1 ) {
+    	LogUtils.d(TAG, "displayData: " + rx_hex);
     	if (data1 != null && data1.length > 0){
     		if(rx_hex){
                 final StringBuilder stringBuilder = new StringBuilder( sbValues.length()  );

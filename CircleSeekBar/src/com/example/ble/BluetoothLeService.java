@@ -48,11 +48,6 @@ import com.lee.circleseekbar.R;
  */
 
 
-
-
-
-
-
 public class BluetoothLeService extends Service {
     private final static String TAG = BluetoothLeService.class.getSimpleName();
 
@@ -116,6 +111,18 @@ public class BluetoothLeService extends Service {
     	Power,//0XEA:�豸����
     	RTC,//0XEB:RTC����
     	
+    }
+    
+    @Override
+    public void onCreate() {
+    	super.onCreate();
+    	LogUtils.d(TAG, "onCreate");
+    }
+    
+    @Override
+    public void onDestroy() {
+    	super.onDestroy();
+    	LogUtils.d(TAG, "onDestroy");
     }
 
     public  String bin2hex(String bin) {
@@ -265,6 +272,7 @@ public class BluetoothLeService extends Service {
 	
     byte[] WriteBytes = new byte[200];
 	public int txxx(String g ,boolean string_or_hex_data ){
+		LogUtils.d(TAG, "sendMessage string_or_hex_data: " + string_or_hex_data);
 		int ic=0;
 		//g=""+g;
 		if( string_or_hex_data )WriteBytes= g.getBytes();//getBytesByString( g );//  hex2byte(g.toString().getBytes());
@@ -1493,6 +1501,7 @@ public class BluetoothLeService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+    	LogUtils.d(TAG, "onBind");
         return mBinder;
     }
 
@@ -1502,6 +1511,7 @@ public class BluetoothLeService extends Service {
         // such that resources are cleaned up properly.  In this particular example, close() is
         // invoked when the UI is disconnected from the Service.
         close();
+        LogUtils.d(TAG, "onUnbind");
         return super.onUnbind(intent);
     }
 
@@ -1548,6 +1558,9 @@ public class BluetoothLeService extends Service {
             LogUtils.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return false;
         }
+        
+        LogUtils.d(TAG, "mBluetoothDeviceAddress: " + mBluetoothDeviceAddress + " address: " 
+        		+ address + " mBluetoothGatt: " + mBluetoothGatt);
 
         // Previously connected device.  Try to reconnect.
         if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
@@ -1591,6 +1604,9 @@ public class BluetoothLeService extends Service {
         mBluetoothGatt.disconnect();
     }
     public boolean isconnect() {
+    	if(mBluetoothGatt == null) {
+    		return false;
+    	}
     	boolean result = mBluetoothGatt.connect();
     	LogUtils.d(TAG, "isconnect: " + result);
         return result;

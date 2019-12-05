@@ -704,6 +704,7 @@ int len_g = 0;
 		data_0=data1.substring(2);
 		*/
     	//da = da+data1+"\n";
+    	LogUtils.d(TAG, "displayData: rx_hex" + rx_hex);
     	if (data1 != null && data1.length > 0)
     	{
 //    		//sbValues.insert(0, data1);
