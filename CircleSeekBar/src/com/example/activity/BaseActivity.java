@@ -57,6 +57,7 @@ public abstract class BaseActivity extends Activity implements ILoadingView, Vie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.d(TAG, "onCreate");
         AppManager.getAppManager().addActivity(this);
         // 设置只能竖屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -109,7 +110,7 @@ public abstract class BaseActivity extends Activity implements ILoadingView, Vie
     }
 
     protected void onTvMenuClick(){
-
+    	LogUtils.d(TAG, "onTvMenuClick");
     }
 
     protected void initPresenter() {
@@ -117,7 +118,7 @@ public abstract class BaseActivity extends Activity implements ILoadingView, Vie
     }
 
     protected void onClickIvMenu(){
-
+    	LogUtils.d(TAG, "onClickIvMenu");
     }
 
     public boolean setMiuiStatusBarDarkMode(boolean darkmode) {
@@ -140,19 +141,25 @@ public abstract class BaseActivity extends Activity implements ILoadingView, Vie
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.d(TAG, "onPause");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.d(TAG, "onResume");
     }
+    
+    
 
     public void iv_back() {
+    	LogUtils.d(TAG, "iv_back");
         onGoback();
     }
 
     @Override
     public void onBackPressed() {
+    	LogUtils.d(TAG, "onBackPressed");
         onGoback();
     }
 
@@ -264,6 +271,7 @@ public abstract class BaseActivity extends Activity implements ILoadingView, Vie
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.d(TAG, "onDestroy");
         AppManager.getAppManager().finishActivity(this);
         if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
             mLoadingDialog.dismiss();

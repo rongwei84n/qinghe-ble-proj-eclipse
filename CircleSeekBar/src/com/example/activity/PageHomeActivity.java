@@ -150,6 +150,7 @@ public class PageHomeActivity extends JdyBaseActivity {
 
     @Override
     protected void onClickIvMenu() {
+    	super.onClickIvMenu();
         LogUtils.d(TAG, "点击跳转到AddDeviceActivity");
         Intent intent = new Intent(PageHomeActivity.this, AddDeviceActivity.class);
         startActivityForResult(intent, REQUEST_ADD_DEVICE);

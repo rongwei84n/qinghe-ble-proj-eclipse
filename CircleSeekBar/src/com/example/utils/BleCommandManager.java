@@ -29,6 +29,9 @@ public class BleCommandManager {
         public static final String COMMAND_READ_CARINFO = "F10_0001_5" + CMD_ENDD_TAG;
         public static final String COMMAND_CAR_VID = "F03_2000" + CMD_ENDD_TAG;//车辆识别号VID
         public static final String COMMAND_STANDARD_ID = "F03_2001" + CMD_ENDD_TAG;//标定识别ID
+        
+        //清除故障
+        public static final String COMMAND_CLEAR_ERROR = "F10_0001_3" + CMD_ENDD_TAG;
 
         //结束指令
         public static final String COMMAND_FINISH = "F10_0001_0" + CMD_ENDD_TAG;//停止指令
