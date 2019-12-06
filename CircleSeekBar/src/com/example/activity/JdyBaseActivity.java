@@ -138,7 +138,7 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     }
 
     protected void onMessageReceive(String msg){
-    	LogUtils.d(TAG, "onMessageReceive, msg: " + msg);
+    	LogUtils.i(TAG, "onMessageReceive, msg: " + msg);
     }
 
     protected void onBleConnectSuccess(){
@@ -220,7 +220,7 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
             	//byte data1;
             	//intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);//  .getByteExtra(BluetoothLeService.EXTRA_DATA, data1);
 
-                displayData( intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA) );
+                displayData(intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA) );
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE1.equals(action)) //接收FFE2功能配置返回的数据
             {
@@ -686,34 +686,35 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
 
     //接收FFE1串口透传数据通道数据
     private void displayData( byte[] data1 ) {
-    	LogUtils.d(TAG, "displayData: " + rx_hex);
+    	LogUtils.d(TAG, "displayData rx_hex: " + rx_hex);
     	if (data1 != null && data1.length > 0){
+    		String tempResult = "";
     		if(rx_hex){
-                final StringBuilder stringBuilder = new StringBuilder( sbValues.length()  );
+                final StringBuilder stringBuilder = new StringBuilder(sbValues.length());// 
                 byte[] WriteBytes = mBluetoothLeService.hex2byte( stringBuilder.toString().getBytes() );
                 
                 for(byte byteChar : data1) {
                     stringBuilder.append(String.format(" %02X", byteChar));
                 }
                 
-    			String da = stringBuilder.toString();
+                tempResult = stringBuilder.toString();
     			//sbValues.append( stringBuilder.toString() ) ;
     			//rx_data_id_1.setText( mBluetoothLeService.String_to_HexString(sbValues.toString()) );
 
     			
     			//String res = new String( da.getBytes()  );
-    			sbValues.append( da );
+    			sbValues.append(tempResult);
     			rx_data_id_1.setText( sbValues.toString() );
     		}else {
-    			String res = new String(data1);
-    			sbValues.append( res ) ;
+    			tempResult = new String(data1);
+    			sbValues.append(tempResult) ;
     			rx_data_id_1.setText( sbValues.toString() );
     		}
-    		final String postStr = sbValues.toString();
+    		final String postStr = tempResult.replace("\r", "").replace("\n", "");
+    		LogUtils.w(TAG, "receive ble msg: " + postStr);
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    LogUtils.d(TAG, "receive ble msg: " + postStr);
                     onMessageReceive(postStr);
                 }
             });

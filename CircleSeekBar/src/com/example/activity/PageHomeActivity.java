@@ -46,7 +46,7 @@ public class PageHomeActivity extends JdyBaseActivity {
 			public void run() {
 				sendMessage(BleCommandManager.Sender.composeDeviceNumCommand(ApplicationStaticValues.moduleId));
 			}
-		}, 2000);
+		}, 3000);
     }
 
     @Override
@@ -55,14 +55,8 @@ public class PageHomeActivity extends JdyBaseActivity {
         if (TextUtils.isEmpty(msg)){
             return;
         }
-        if (msg.contains("ERR_")){
-            //这个界面只有连接蓝牙操作，所以这个ERR肯定是点击连接蓝牙传回来的。
-            LogUtils.d(TAG, "模块号匹配失败: " + ApplicationStaticValues.moduleId
-                    + "deviceAddress: " + ApplicationStaticValues.deviceAddress
-                    + "deviceName: " + ApplicationStaticValues.deviceName);
-            ToastUtil.show(PageHomeActivity.this, "模块号匹配失败,请重新添加蓝牙");
-        }else {
-            //模块号匹配成功连接成功
+        if (msg.contains("OK")){
+        	//模块号匹配成功连接成功
             LogUtils.d(TAG, "模块号匹配成功: " + ApplicationStaticValues.moduleId
                     + "deviceAddress: " + ApplicationStaticValues.deviceAddress
                     + "deviceName: " + ApplicationStaticValues.deviceName);
@@ -72,6 +66,12 @@ public class PageHomeActivity extends JdyBaseActivity {
                 Intent intent = new Intent(PageHomeActivity.this, OBDHomeActivity.class);
                 startActivity(intent);
 			}
+        }else {
+        	//这个界面只有连接蓝牙操作，所以这个ERR肯定是点击连接蓝牙传回来的。
+            LogUtils.d(TAG, "模块号匹配失败: " + ApplicationStaticValues.moduleId
+                    + "deviceAddress: " + ApplicationStaticValues.deviceAddress
+                    + "deviceName: " + ApplicationStaticValues.deviceName);
+            ToastUtil.show(PageHomeActivity.this, "模块号匹配失败,请重新添加蓝牙");
         }
     }
 

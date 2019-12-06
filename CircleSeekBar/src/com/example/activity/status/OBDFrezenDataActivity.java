@@ -79,9 +79,9 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
             delayTime = presendCmd.getDelayTime();
         }
         final BleSendCommandModel nextSendModel = findNextSendCommand();
-        LogUtils.d(TAG,"nextTrySendModel: " + nextSendModel.getCommand());
 
         if (nextSendModel != null) {
+        	LogUtils.d(TAG,"nextTrySendModel: " + nextSendModel.getCommand());
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

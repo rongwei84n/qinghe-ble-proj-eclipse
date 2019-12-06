@@ -199,9 +199,8 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
             delayTime = repeatDelayTime;
         }
         final BleSendCommandModel nextTrySendModel = nextSendModel;
-        LogUtils.d(TAG,"nextTrySendModel: " + nextTrySendModel.getCommand());
-
         if (nextTrySendModel != null) {
+        	LogUtils.d(TAG,"nextTrySendModel: " + nextTrySendModel.getCommand());
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

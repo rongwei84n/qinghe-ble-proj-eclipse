@@ -75,7 +75,7 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
 			public void run() {
 				sendMessage(BleCommandManager.Sender.composeDeviceNumCommand(ApplicationStaticValues.moduleId));
 			}
-		}, 2000);
+		}, 3000);
     }
 
     @Override
@@ -84,13 +84,8 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
         if (TextUtils.isEmpty(msg)){
             return;
         }
-        if (msg.contains("ERR_")){
-            //这个界面只有连接蓝牙操作，所以这个ERR肯定是点击连接蓝牙传回来的。
-        	LogUtils.d(TAG, "onMessageReceive 模块号匹配失败");
-            ToastUtil.show(AddDeviceActivity.this,
-                    "模块号" + ApplicationStaticValues.moduleId + "匹配失败,请重新添加蓝牙");
-        }else {
-            //模块号匹配成功连接成功
+        if (msg.contains("OK")){
+        	//模块号匹配成功连接成功
         	LogUtils.d(TAG, "onMessageReceive 模块号匹配成功");
         	List<BleDeviceModel> devices = DeviceLogic.getAllBleDevices(AddDeviceActivity.this);
         	boolean exists = false;
@@ -118,6 +113,11 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
             Intent intent = new Intent(AddDeviceActivity.this, OBDHomeActivity.class);
             startActivity(intent);
             finish();
+        }else {
+        	//这个界面只有连接蓝牙操作，所以这个ERR肯定是点击连接蓝牙传回来的。
+        	LogUtils.d(TAG, "onMessageReceive 模块号匹配失败");
+            ToastUtil.show(AddDeviceActivity.this,
+                    "模块号" + ApplicationStaticValues.moduleId + "匹配失败,请重新添加蓝牙");
         }
     }
 

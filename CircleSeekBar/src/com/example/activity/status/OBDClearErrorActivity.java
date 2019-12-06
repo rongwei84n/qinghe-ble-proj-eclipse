@@ -53,7 +53,6 @@ public class OBDClearErrorActivity extends JdyBaseActivity {
             public void onClick(View v) {
             	LogUtils.d(TAG, "点击清除故障按钮");
             	sendMessage(BleCommandManager.Sender.COMMAND_CLEAR_ERROR);
-//            	sendMessage(BleCommandManager.Sender.composeDeviceNumCommand("12345678"));
             }
         });
         mTvClearResult = (TextView) findViewById(R.id.tv_result);
