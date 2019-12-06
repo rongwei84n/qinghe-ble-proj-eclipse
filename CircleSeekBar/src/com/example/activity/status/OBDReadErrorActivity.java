@@ -2,6 +2,8 @@ package com.example.activity.status;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,28 +62,28 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         return null;
     }
 
-    private BleSendCommandModel findNextRepeatCommand(){
-        if (mRepeatCommandList == null || mRepeatCommandList.isEmpty()){
-            return null;
-        }
-        for (BleSendCommandModel model: mRepeatCommandList){
-            if (model.notSend()){
-                return model;
-            }
-        }
-
-        //如果已经遍历完了所有的待发队列，直接把待发队列设置成初始化状态，从头遍历.
-        for (BleSendCommandModel model: mRepeatCommandList){
-            model.setStatus(BleSendCommandModel.SendCmdStatus.STATUS_INIT);
-        }
-        for (BleSendCommandModel model: mRepeatCommandList){
-            if (model.notSend()){
-                return model;
-            }
-        }
-
-        return null;
-    }
+//    private BleSendCommandModel findNextRepeatCommand(){
+//        if (mRepeatCommandList == null || mRepeatCommandList.isEmpty()){
+//            return null;
+//        }
+//        for (BleSendCommandModel model: mRepeatCommandList){
+//            if (model.notSend()){
+//                return model;
+//            }
+//        }
+//
+//        //如果已经遍历完了所有的待发队列，直接把待发队列设置成初始化状态，从头遍历.
+//        for (BleSendCommandModel model: mRepeatCommandList){
+//            model.setStatus(BleSendCommandModel.SendCmdStatus.STATUS_INIT);
+//        }
+//        for (BleSendCommandModel model: mRepeatCommandList){
+//            if (model.notSend()){
+//                return model;
+//            }
+//        }
+//
+//        return null;
+//    }
 
     private BleSendCommandModel findNextSendCommand(){
         for (BleSendCommandModel model: mCommandQueue){
@@ -90,12 +92,6 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
             }
         }
         return null;
-    }
-    
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
     }
 
     @Override
@@ -109,9 +105,9 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
                 LogUtils.e(TAG, e);
             }
             if (receiveParsedModel.isResultSuccess()){
-                mDataSource.add("无故障");
-            }else {
                 mDataSource.add("故障个数: " + receiveParsedModel.getResultByIndex(0));
+            }else {
+            	mDataSource.add("读取故障个数失败"); 
             }
             mAdapter.notifyDataSetChanged();
 
@@ -180,12 +176,32 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
                 BleCommandManager.Sender.COMMAND_READ_ERROR_9.contains(receiveParsedModel.getSendCmd()) ||
                 BleCommandManager.Sender.COMMAND_READ_ERROR_10.contains(receiveParsedModel.getSendCmd())){
             if (receiveParsedModel.isResultSuccess()){
-                mDataSource.add("故障码: " + receiveParsedModel.getResultByIndex(0) + "故障描述: " + receiveParsedModel.getResultByIndex(1));
+            	StringBuilder sb = new StringBuilder();
+            	sb.append("故障码: ");
+            	if (TextUtils.isEmpty(receiveParsedModel.getResultByIndex(0))) {
+            		sb.append("无");
+				}else {
+					sb.append(receiveParsedModel.getResultByIndex(0));
+				}
+            	sb.append(",");
+            	sb.append("故障描述:");
+            	if (TextUtils.isEmpty(receiveParsedModel.getResultByIndex(1))) {
+					sb.append("无");
+				}else {
+					sb.append(TextUtils.isEmpty(receiveParsedModel.getResultByIndex(1)));
+				}
+                mDataSource.add(sb.toString());
             }else {
                 mDataSource.add("故障码读取错误: " + receiveParsedModel.getResultByIndex(0));
             }
 
             mAdapter.notifyDataSetChanged();
+        }else if(BleCommandManager.Sender.COMMAND_FINISH.contains(receiveParsedModel.getSendCmd())) {
+        	if(mWaitDialog != null) {
+        		mWaitDialog.dismiss();
+        		mWaitDialog = null;
+        	}
+        	finish();
         }
 
         BleSendCommandModel presendCmd = findSendCmdByReceive(receiveParsedModel.getSendCmd());
@@ -194,10 +210,10 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
             delayTime = presendCmd.getDelayTime();
         }
         BleSendCommandModel nextSendModel = findNextSendCommand();
-        if (nextSendModel == null){
-            nextSendModel = findNextRepeatCommand();
-            delayTime = repeatDelayTime;
-        }
+//        if (nextSendModel == null){
+//            nextSendModel = findNextRepeatCommand();
+//            delayTime = repeatDelayTime;
+//        }
         final BleSendCommandModel nextTrySendModel = nextSendModel;
         if (nextTrySendModel != null) {
         	LogUtils.d(TAG,"nextTrySendModel: " + nextTrySendModel.getCommand());
@@ -212,15 +228,16 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
 
     private void createCommandQueue(){
         mCommandQueue = new ArrayList<BleSendCommandModel>();
-        BleSendCommandModel totalErrorCommand = new BleSendCommandModel(
-                BleCommandManager.Sender.COMMAND_READ_ERROR_COUNT,
-                0);
-        mCommandQueue.add(totalErrorCommand);
 
         BleSendCommandModel startReadErrorCommand = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_START_READ_ERROR,
-                100);
+                200);
         mCommandQueue.add(startReadErrorCommand);
+        
+        BleSendCommandModel totalErrorCommand = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_READ_ERROR_COUNT,
+                200);
+        mCommandQueue.add(totalErrorCommand);
     }
 
     @Override
@@ -244,6 +261,22 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         mListView.setAdapter(mAdapter);
 
         bindBleService();
+    }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if (keyCode == KeyEvent.KEYCODE_BACK) {
+    		LogUtils.d(TAG, "onKeyDown KEYCODE_BACK");
+    		onExit();
+    		return true;
+		}
+    	return super.onKeyDown(keyCode, event);
+    }
+    
+    @Override
+    public void onGoback() {
+    	LogUtils.d(TAG, "onGoback");
+    	onExit();
     }
 
     private void initDataSource(){
@@ -279,6 +312,9 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
             }
             TextView textView = (TextView) convertView.findViewById(R.id.tv_title);
             textView.setText(mDataSource.get(position));
+            
+            View rightView = convertView.findViewById(R.id.ll_right);
+            rightView.setVisibility(View.GONE);
             return convertView;
         }
     }

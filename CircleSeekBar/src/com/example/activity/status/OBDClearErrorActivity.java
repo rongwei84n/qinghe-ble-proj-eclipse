@@ -33,6 +33,9 @@ public class OBDClearErrorActivity extends JdyBaseActivity {
 				ToastUtil.show(OBDClearErrorActivity.this, "清除故障码失败");
 				mTvClearResult.setText("清除故障码失败");
 			}
+	    	
+	    	LogUtils.d(TAG, "清除故障命令返回后，下发停止指令");
+	    	sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
 		}
 	}
     

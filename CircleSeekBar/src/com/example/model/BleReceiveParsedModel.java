@@ -84,7 +84,7 @@ public class BleReceiveParsedModel {
     }
 
     public String getResultByIndex(int index){
-        if (results == null || results.size() < index){
+        if (results == null || results.size() <= index){
             return "";
         }
         return results.get(index);

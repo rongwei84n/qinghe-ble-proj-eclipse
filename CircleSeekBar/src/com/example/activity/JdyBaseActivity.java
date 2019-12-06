@@ -17,6 +17,7 @@
 package com.example.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -24,6 +25,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -51,6 +53,7 @@ import com.lee.circleseekbar.R;
 import com.example.ble.BluetoothLeService;
 import com.example.model.BleSendCommandModel;
 import com.example.utils.ApplicationStaticValues;
+import com.example.utils.BleCommandManager;
 import com.example.utils.LogUtils;
 import com.example.utils.ToastUtil;
 
@@ -68,6 +71,8 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     protected int repeatDelayTime = 5000;
 
     private Handler mMainHandler = new Handler();
+    
+    protected AlertDialog mWaitDialog;
 
 	private StringBuffer sbValues;
 
@@ -892,4 +897,21 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
 		//mBluetoothLeService.set_PWM_ALL_pulse( seekBar.getProgress(), seekBar.getProgress(), seekBar.getProgress(), seekBar.getProgress() );
 		//Toast.makeText(jdy_Activity.this, "pulse"+seekBar.getProgress(), Toast.LENGTH_SHORT).show(); 
 	}
+	
+	protected void onExit() {
+    	sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setTitle("提示");
+    	builder.setMessage("正在通知设备停止，是否等待?");
+    	builder.setPositiveButton("等待", null);
+    	builder.setNegativeButton("直接退出", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		});
+    	
+    	mWaitDialog = builder.create();
+    	mWaitDialog.show();
+    }
 }

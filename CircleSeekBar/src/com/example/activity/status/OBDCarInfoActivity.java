@@ -34,9 +34,15 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
     @Override
     protected void onBleConnectSuccess() {
 		super.onBleConnectSuccess();
-		BleSendCommandModel sendCommandModel = findNextSendCommand();
+		ToastUtil.show(OBDCarInfoActivity.this, "蓝牙连接成功，正在读取车辆信息，请稍候...");
+		final BleSendCommandModel sendCommandModel = findNextSendCommand();
         if (sendCommandModel != null){
-            sendMessage(sendCommandModel);
+            mHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					sendMessage(sendCommandModel);
+				}
+			}, 2000);
         }
 	}
     
@@ -84,7 +90,7 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
         mCommandQueue = new ArrayList<BleSendCommandModel>();
         BleSendCommandModel readCarInfoCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_READ_CARINFO,
-                0);
+                100);
         mCommandQueue.add(readCarInfoCmd);
         
         BleSendCommandModel carVidCmd = new BleSendCommandModel(

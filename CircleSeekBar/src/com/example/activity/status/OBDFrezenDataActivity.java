@@ -16,6 +16,7 @@ import com.example.model.BleReceiveParsedModel;
 import com.example.model.BleSendCommandModel;
 import com.example.utils.BleCommandManager;
 import com.example.utils.LogUtils;
+import com.example.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,15 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
     @Override
     protected void onBleConnectSuccess() {
 		super.onBleConnectSuccess();
-		BleSendCommandModel sendCommandModel = findNextSendCommand();
+		ToastUtil.show(OBDFrezenDataActivity.this, "蓝牙连接成功，正在冻结数据，请稍候...");
+		final BleSendCommandModel sendCommandModel = findNextSendCommand();
         if (sendCommandModel != null){
-            sendMessage(sendCommandModel);
+            mHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					sendMessage(sendCommandModel);
+				}
+			}, 2000);
         }
 	}
     
@@ -96,8 +103,13 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         mCommandQueue = new ArrayList<BleSendCommandModel>();
         BleSendCommandModel frezenCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_FREZEN_DATA,
-                0);
+                100);
         mCommandQueue.add(frezenCmd);
+        
+        BleSendCommandModel finishCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_FINISH,
+                0);
+        mCommandQueue.add(finishCmd);
     }
     
     @Override
@@ -119,22 +131,16 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
 
     @Override
     public void afterInitView() {
+    	super.afterInitView();
         initDataSource();
         mTvTitle.setText("冻结数据");
         mListView = (ListView) findViewById(R.id.lv_functionlist);
         mAdapter = new MyFuctionsAdapter();
         mListView.setAdapter(mAdapter);
     }
-    
-    @Override
-    protected void onDestroy() {
-		super.onDestroy();
-		sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
-	}
 
     private void initDataSource(){
         mDataSource = new ArrayList<DataModel>();
-        mDataSource.add(new DataModel("参数描述", "参数值"));
     }
 
     private class DataModel{
@@ -176,7 +182,7 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
             TextView tvValue = (TextView) convertView.findViewById(R.id.tv_right_text);
             tvTitle.setText(mDataSource.get(position).title);
             tvValue.setText(mDataSource.get(position).value);
-
+            
             ImageView imgRight = (ImageView) convertView.findViewById(R.id.img_right_icon);
             imgRight.setVisibility(View.GONE);
             return convertView;
