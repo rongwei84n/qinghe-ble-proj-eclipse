@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.lee.circleseekbar.R;
 import com.example.activity.JdyBaseActivity;
+import com.example.model.BleSendCommandModel;
 import com.example.utils.BleCommandManager;
 
 import java.util.ArrayList;
@@ -21,11 +22,65 @@ public class OBDRealDataActivity extends JdyBaseActivity {
     private ListView mListView;
     private List<DataModel> mDataSource;
     private MyFuctionsAdapter mAdapter;
+    private List<BleSendCommandModel> mCommandQueue;
+    
+    private void createCommandQueue(){
+        mCommandQueue = new ArrayList<BleSendCommandModel>();
+        BleSendCommandModel startRealData = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_REAL_DATA,
+                100);
+        mCommandQueue.add(startRealData);
+        
+        BleSendCommandModel speedCommand = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_SPEED,
+                0);
+        mCommandQueue.add(speedCommand);
+        
+        BleSendCommandModel randCommand = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_RAND,
+                0);
+        mCommandQueue.add(randCommand);
+        
+        BleSendCommandModel temptureCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_TEMPTURE,
+                0);
+        mCommandQueue.add(temptureCmd);
+        
+        BleSendCommandModel battaryVCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_BATTARY_V,
+                0);
+        mCommandQueue.add(battaryVCmd);
+        
+        BleSendCommandModel xiqiTempCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_XIQI_TEMPTURE,
+                0);
+        mCommandQueue.add(xiqiTempCmd);
+        
+        BleSendCommandModel jiqiguanPressCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS,
+                0);
+        mCommandQueue.add(jiqiguanPressCmd);
+        
+        BleSendCommandModel chepaiVidCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_CHEPAI_VID,
+                0);
+        mCommandQueue.add(chepaiVidCmd);
+        
+        BleSendCommandModel biaodingIdCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_BIAODING_ID,
+                0);
+        mCommandQueue.add(biaodingIdCmd);
+        
+        BleSendCommandModel cvnCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_CVN,
+                0);
+        mCommandQueue.add(cvnCmd);
+    }
     
     @Override
     public void beforeInitLayout() {
 		super.beforeInitLayout();
-		
+		createCommandQueue();
 	}
 
     @Override
@@ -35,6 +90,7 @@ public class OBDRealDataActivity extends JdyBaseActivity {
 
     @Override
     public void afterInitView() {
+    	super.afterInitView();
         initDataSource();
         mTvTitle.setText("实时数据");
         mListView = (ListView) findViewById(R.id.lv_functionlist);

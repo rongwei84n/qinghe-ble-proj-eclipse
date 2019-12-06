@@ -272,7 +272,7 @@ public class BluetoothLeService extends Service {
 	
     byte[] WriteBytes = new byte[200];
 	public int txxx(String g ,boolean string_or_hex_data ){
-		LogUtils.d(TAG, "sendMessage string_or_hex_data: " + string_or_hex_data);
+		LogUtils.d(TAG, "sendMessage: " + g + " string_or_hex_data: " + string_or_hex_data);
 		int ic=0;
 		//g=""+g;
 		if( string_or_hex_data )WriteBytes= g.getBytes();//getBytesByString( g );//  hex2byte(g.toString().getBytes());
@@ -1406,10 +1406,12 @@ public class BluetoothLeService extends Service {
             if (status == BluetoothGatt.GATT_SUCCESS) {
             	if( UUID.fromString(Characteristic_uuid_TX).equals(characteristic.getUuid()) )
             	{
+            		LogUtils.d(TAG, "onCharacteristicRead Characteristic_uuid_TX");
             		broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             	}
             	else if( UUID.fromString(Characteristic_uuid_FUNCTION).equals(characteristic.getUuid()) )
             	{
+            		LogUtils.d(TAG, "onCharacteristicRead ACTION_DATA_AVAILABLE1");
             		broadcastUpdate(ACTION_DATA_AVAILABLE1, characteristic);
             	}
             }
@@ -1421,10 +1423,12 @@ public class BluetoothLeService extends Service {
             //broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
         	if( UUID.fromString(Characteristic_uuid_TX).equals(characteristic.getUuid()) )
         	{
+        		LogUtils.d(TAG, "onCharacteristicChanged onCharacteristicChanged");
         		broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
         	}
         	else if( UUID.fromString(Characteristic_uuid_FUNCTION).equals(characteristic.getUuid()) )
         	{
+        		LogUtils.d(TAG, "onCharacteristicChanged ACTION_DATA_AVAILABLE1");
         		broadcastUpdate(ACTION_DATA_AVAILABLE1, characteristic);
         	}
         }
@@ -1566,12 +1570,15 @@ public class BluetoothLeService extends Service {
         if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
                 && mBluetoothGatt != null) {
         	LogUtils.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
-            if (mBluetoothGatt.connect()) {
-                mConnectionState = STATE_CONNECTING;
-                return true;
-            } else {
-                return false;
-            }
+//            if (mBluetoothGatt.connect()) {
+//                mConnectionState = STATE_CONNECTING;
+//                return true;
+//            } else {
+//                return false;
+//            }
+            mConnectionState = STATE_CONNECTED;
+            broadcastUpdate(ACTION_GATT_CONNECTED);
+        	return true;
         }
 
         final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);

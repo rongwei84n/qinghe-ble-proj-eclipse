@@ -129,9 +129,11 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     protected final void bindBleService(){
         showLoading();
         LogUtils.d(TAG, "bindBleService, mBluetoothLeService: " + mBluetoothLeService);
-        if (mBluetoothLeService == null) {
-        	Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-            bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        if (mBluetoothLeService != null) {
+        	mBluetoothLeService.connect(ApplicationStaticValues.deviceAddress);
+		}else {
+	        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+	        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 		}
     }
 
@@ -672,7 +674,9 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mConnectionState.setText(resourceId);
+            	if (mConnectionState != null) {
+            		mConnectionState.setText(resourceId);
+				}
             }
         });
     }

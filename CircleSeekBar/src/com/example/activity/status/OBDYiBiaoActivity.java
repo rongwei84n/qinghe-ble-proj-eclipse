@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.lee.circleseekbar.R;
 import com.example.activity.BaseActivity;
+import com.example.activity.JdyBaseActivity;
 import com.example.views.DashboardView;
 import com.example.views.HighlightCR;
 //import com.github.mikephil.charting.animation.Easing;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class OBDYiBiaoActivity extends BaseActivity {
+public class OBDYiBiaoActivity extends JdyBaseActivity {
 //    private PieChart mPieChart;
     private DashboardView mDashboardView;
 
@@ -34,6 +35,7 @@ public class OBDYiBiaoActivity extends BaseActivity {
 
     @Override
     public void afterInitView() {
+    	super.afterInitView();
         mTvTitle.setText("仪表");
         mDashboardView = (DashboardView) findViewById(R.id.dbv_licheng);
 

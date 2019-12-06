@@ -1,5 +1,6 @@
 package com.example.activity;
 
+import java.util.List;
 import java.util.Timer;
 
 import android.app.AlertDialog;
@@ -23,7 +24,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.activity.status.OBDHomeActivity;
@@ -33,13 +33,13 @@ import com.example.jdy_touchuang.AV_Stick;
 import com.example.jdy_touchuang.jdy_switch_Activity;
 import com.example.jdy_touchuang.shengjiangji;
 import com.example.jdy_type.Get_type;
-import com.example.jdy_type.JDY_type;
 import com.example.model.BleDeviceModel;
 import com.example.sensor.jdy_ibeacon_Activity;
 import com.example.set.set;
 import com.lee.circleseekbar.R;
 import com.example.utils.ApplicationStaticValues;
 import com.example.utils.BleCommandManager;
+import com.example.utils.ListUtils;
 import com.example.utils.LogUtils;
 import com.example.utils.ToastUtil;
 
@@ -68,7 +68,14 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
     @Override
     protected void onBleConnectSuccess() {
         super.onBleConnectSuccess();
-        sendMessage(BleCommandManager.Sender.composeDeviceNumCommand(ApplicationStaticValues.moduleId));
+        
+        ToastUtil.show(this, "蓝牙连接成功，正在匹配设备，请稍等...");
+        mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				sendMessage(BleCommandManager.Sender.composeDeviceNumCommand(ApplicationStaticValues.moduleId));
+			}
+		}, 2000);
     }
 
     @Override
@@ -79,21 +86,38 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
         }
         if (msg.contains("ERR_")){
             //这个界面只有连接蓝牙操作，所以这个ERR肯定是点击连接蓝牙传回来的。
+        	LogUtils.d(TAG, "onMessageReceive 模块号匹配失败");
             ToastUtil.show(AddDeviceActivity.this,
                     "模块号" + ApplicationStaticValues.moduleId + "匹配失败,请重新添加蓝牙");
         }else {
             //模块号匹配成功连接成功
-            BleDeviceModel bleDeviceModel = new BleDeviceModel();
-            bleDeviceModel.setDeviceName(ApplicationStaticValues.deviceName);
-            bleDeviceModel.setDeviceAddress(ApplicationStaticValues.deviceAddress);
-            bleDeviceModel.setModuleID(ApplicationStaticValues.moduleId);
-            bleDeviceModel.setStatus(0);
-            bleDeviceModel.setCreateTime(System.currentTimeMillis()+"");
-            DeviceLogic.addDevice(AddDeviceActivity.this, bleDeviceModel);
+        	LogUtils.d(TAG, "onMessageReceive 模块号匹配成功");
+        	List<BleDeviceModel> devices = DeviceLogic.getAllBleDevices(AddDeviceActivity.this);
+        	boolean exists = false;
+        	if (!ListUtils.isEmpty(devices)) {
+				for (BleDeviceModel bleDeviceModel : devices) {
+					if (bleDeviceModel.getDeviceName().equals(ApplicationStaticValues.deviceName) &&
+							bleDeviceModel.getModuleID().contentEquals(ApplicationStaticValues.moduleId) &&
+							bleDeviceModel.getDeviceAddress().equals(ApplicationStaticValues.deviceAddress)) {
+						exists = true;
+					}
+				}
+			}
+        	
+        	if (!exists) {
+        		BleDeviceModel bleDeviceModel = new BleDeviceModel();
+                bleDeviceModel.setDeviceName(ApplicationStaticValues.deviceName);
+                bleDeviceModel.setDeviceAddress(ApplicationStaticValues.deviceAddress);
+                bleDeviceModel.setModuleID(ApplicationStaticValues.moduleId);
+                bleDeviceModel.setStatus(0);
+                bleDeviceModel.setCreateTime(System.currentTimeMillis()+"");
+                DeviceLogic.addDevice(AddDeviceActivity.this, bleDeviceModel);
+			}
 
             ToastUtil.show(AddDeviceActivity.this, "连接成功");
             Intent intent = new Intent(AddDeviceActivity.this, OBDHomeActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 
@@ -187,21 +211,8 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
                                         ApplicationStaticValues.deviceAddress = deviceAddress;
                                         ApplicationStaticValues.moduleId = str;
                                         
-//                                        LogUtils.d(TAG, "确定添加 deviceName： " + deviceName + " deviceAddress: " + deviceAddress + " moduleId: " + str);
-//                                        bindBleService();
-                                        
-                                        //TODO
-                                        BleDeviceModel bleDeviceModel = new BleDeviceModel();
-                                        bleDeviceModel.setDeviceName(ApplicationStaticValues.deviceName);
-                                        bleDeviceModel.setDeviceAddress(ApplicationStaticValues.deviceAddress);
-                                        bleDeviceModel.setModuleID(ApplicationStaticValues.moduleId);
-                                        bleDeviceModel.setStatus(0);
-                                        bleDeviceModel.setCreateTime(System.currentTimeMillis()+"");
-                                        DeviceLogic.addDevice(AddDeviceActivity.this, bleDeviceModel);
-
-                                        ToastUtil.show(AddDeviceActivity.this, "连接成功");
-                                        Intent intent = new Intent(AddDeviceActivity.this, OBDHomeActivity.class);
-                                        startActivity(intent);
+                                        LogUtils.d(TAG, "确定添加 deviceName： " + deviceName + " deviceAddress: " + deviceAddress + " moduleId: " + str);
+                                        bindBleService();
                                     }
                                 });
                                 builder.setNegativeButton("取消", null);

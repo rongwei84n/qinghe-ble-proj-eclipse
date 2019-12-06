@@ -118,6 +118,7 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
 
     @Override
     public void afterInitView() {
+    	super.afterInitView();
         initDataSource();
         mTvTitle.setText("车辆识别");
         mListView = (ListView) findViewById(R.id.lv_functionlist);

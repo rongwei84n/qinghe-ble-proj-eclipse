@@ -43,6 +43,7 @@ public class OBDClearErrorActivity extends JdyBaseActivity {
 
     @Override
     public void afterInitView() {
+    	super.afterInitView();
         mTvTitle.setText("清除故障码");
         mTvTips = (TextView) findViewById(R.id.tv_tips);
         mTvTips.setText("1. 清除故障码，请关闭发动机，钥匙置于ON位置\n2. 在故障未解决之前，建议不要随意清除故障码，应尽快到维修点进行检测。");
@@ -52,6 +53,7 @@ public class OBDClearErrorActivity extends JdyBaseActivity {
             public void onClick(View v) {
             	LogUtils.d(TAG, "点击清除故障按钮");
             	sendMessage(BleCommandManager.Sender.COMMAND_CLEAR_ERROR);
+//            	sendMessage(BleCommandManager.Sender.composeDeviceNumCommand("12345678"));
             }
         });
         mTvClearResult = (TextView) findViewById(R.id.tv_result);

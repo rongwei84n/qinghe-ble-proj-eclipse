@@ -408,8 +408,8 @@ public class jdy_Activity extends Activity implements SeekBar.OnSeekBarChangeLis
         
         
         boolean sg;
-        getActionBar().setTitle(mDeviceName+"  ͸��");
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+//        getActionBar().setTitle(mDeviceName+"  ͸��");
+//        getActionBar().setDisplayHomeAsUpEnabled(true);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         sg = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         //getActionBar().setTitle( "="+BluetoothLeService );

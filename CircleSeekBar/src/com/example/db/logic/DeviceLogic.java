@@ -53,6 +53,7 @@ public class DeviceLogic {
             ContentValues cv = new ContentValues();
             cv.put(DBHelper.TBL_BLE_DEVICES.DEVICE_NAME, model.getDeviceName());
             cv.put(DBHelper.TBL_BLE_DEVICES.DEVICE_ADDRESS, model.getDeviceAddress());
+            cv.put(DBHelper.TBL_BLE_DEVICES.MODULE_ID, model.getModuleID());
             cv.put(DBHelper.TBL_BLE_DEVICES.CREATE_TIME, model.getCreateTime());
             cv.put(DBHelper.TBL_BLE_DEVICES.CREATE_TIME_STR, model.getCreateTimeStr());
             cv.put(DBHelper.TBL_BLE_DEVICES.STATUS, model.getStatus());

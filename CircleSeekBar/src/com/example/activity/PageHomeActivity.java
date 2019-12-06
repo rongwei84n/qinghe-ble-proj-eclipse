@@ -34,11 +34,19 @@ public class PageHomeActivity extends JdyBaseActivity {
     private MyDeviceListAdapter mAdapter;
     private TextView mTvEmpty;
     private Handler mHandler = new Handler();
+    
+    private boolean mReceiveConnectResponse = false;
 
     @Override
     protected void onBleConnectSuccess() {
         super.onBleConnectSuccess();
-        sendMessage(BleCommandManager.Sender.composeDeviceNumCommand(ApplicationStaticValues.moduleId));
+        ToastUtil.show(this, "蓝牙连接成功，正在匹配设备，请稍等...");
+        mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				sendMessage(BleCommandManager.Sender.composeDeviceNumCommand(ApplicationStaticValues.moduleId));
+			}
+		}, 2000);
     }
 
     @Override
@@ -58,9 +66,12 @@ public class PageHomeActivity extends JdyBaseActivity {
             LogUtils.d(TAG, "模块号匹配成功: " + ApplicationStaticValues.moduleId
                     + "deviceAddress: " + ApplicationStaticValues.deviceAddress
                     + "deviceName: " + ApplicationStaticValues.deviceName);
-            ToastUtil.show(PageHomeActivity.this, "连接成功");
-            Intent intent = new Intent(PageHomeActivity.this, OBDHomeActivity.class);
-            startActivity(intent);
+            if (!mReceiveConnectResponse) {
+            	mReceiveConnectResponse = true;
+                ToastUtil.show(PageHomeActivity.this, "连接成功");
+                Intent intent = new Intent(PageHomeActivity.this, OBDHomeActivity.class);
+                startActivity(intent);
+			}
         }
     }
 
@@ -132,7 +143,10 @@ public class PageHomeActivity extends JdyBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mReceiveConnectResponse = false;
         updateEmptyView();
+        mDeviceModels = DeviceLogic.getAllBleDevices(this);
+        mAdapter.notifyDataSetChanged();
         LogUtils.d(TAG, "onResume");
     }
 
@@ -195,7 +209,7 @@ public class PageHomeActivity extends JdyBaseActivity {
                         null);
             }
             TextView tvName = (TextView)convertView.findViewById(R.id.tv_name);
-            tvName.setText(mDeviceModels.get(position).getModuleID());
+            tvName.setText(mDeviceModels.get(position).getDeviceName() +"_" + mDeviceModels.get(position).getModuleID());
 
             return convertView;
         }
