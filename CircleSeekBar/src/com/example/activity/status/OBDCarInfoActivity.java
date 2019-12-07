@@ -75,6 +75,8 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
 			updateDateSource("车辆识别号", receiveParsedModel.getResultByIndex(0));
     	}else if(BleCommandManager.Sender.COMMAND_STANDARD_ID.contains(receiveParsedModel.getSendCmd())) {
 			updateDateSource("标定识别号", receiveParsedModel.getResultByIndex(0));
+    	}else if(BleCommandManager.Sender.COMMAND_CVN.contains(receiveParsedModel.getSendCmd())) {
+			updateDateSource("校准核查码(CVN)", receiveParsedModel.getResultByIndex(0));
     	}
     	
     	BleSendCommandModel presendCmd = findSendCmdByReceive(receiveParsedModel.getSendCmd());
@@ -110,6 +112,11 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
                 BleCommandManager.Sender.COMMAND_STANDARD_ID,
                 1000);
         mCommandQueue.add(standardIdCmd);
+        
+        BleSendCommandModel cvnCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_CVN,
+                1000);
+        mCommandQueue.add(cvnCmd);
         
         
         BleSendCommandModel finishCmd = new BleSendCommandModel(
