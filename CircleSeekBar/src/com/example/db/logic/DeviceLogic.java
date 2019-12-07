@@ -69,4 +69,20 @@ public class DeviceLogic {
             }
         }
     }
+    
+    public static void removeDevice(Context context, String deviceName, String deviceAddress, String moduleId) {
+    	SQLiteDatabase db = null;
+        try{
+            db = SqliteDAL.getInstance(context).mDbHelper.getWritableDatabase();
+            db.delete(DBHelper.TBL_BLE_DEVICES.TABLE_NAME, 
+            		DBHelper.TBL_BLE_DEVICES.DEVICE_NAME+"=? and " + DBHelper.TBL_BLE_DEVICES.DEVICE_ADDRESS + "=? and " + DBHelper.TBL_BLE_DEVICES.MODULE_ID + "=?", 
+            		new String[]{deviceName, deviceAddress, moduleId});
+        }catch (Exception e){
+            LogUtils.e(TAG, e);
+        }finally{
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
 }

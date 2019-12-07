@@ -1,5 +1,7 @@
 package com.example.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -124,6 +126,29 @@ public class PageHomeActivity extends JdyBaseActivity {
                 bindBleService();
             }
         });
+        
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(PageHomeActivity.this);
+				builder.setTitle("确认");
+				builder.setMessage("是否要删除" + mDeviceModels.get(position).getDeviceName() 
+						+ "_" + mDeviceModels.get(position).getModuleID() + "吗?");
+				builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						mDeviceModels.remove(position);
+						DeviceLogic.removeDevice(PageHomeActivity.this, mDeviceModels.get(position).getDeviceName(), 
+								mDeviceModels.get(position).getDeviceAddress(), 
+								mDeviceModels.get(position).getModuleID());
+						mAdapter.notifyDataSetChanged();
+					}
+				});
+				builder.setNegativeButton("取消", null);
+				builder.show();
+				return true;
+			}
+		});
 
         hideBack();
         mTvTitle.setText("蓝牙列表");
