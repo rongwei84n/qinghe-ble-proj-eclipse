@@ -1,15 +1,19 @@
 package com.example.activity.status;
 
 import android.os.Bundle;
-import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.lee.circleseekbar.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.example.activity.JdyBaseActivity;
 import com.example.model.BleReceiveParsedModel;
+import com.example.model.BleSendCommandModel;
 import com.example.utils.BleCommandManager;
 import com.example.utils.LogUtils;
 import com.example.utils.ToastUtil;
@@ -20,7 +24,21 @@ public class OBDClearErrorActivity extends JdyBaseActivity {
     private Button mBtnClear;
     private TextView mTvClearResult;
     
-    private Handler mHandler = new Handler();
+    private List<BleSendCommandModel> mCommandQueue;
+    
+    private void createCommandQueue(){
+        mCommandQueue = new ArrayList<BleSendCommandModel>();
+        BleSendCommandModel finishCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_FINISH,
+                0);
+        mCommandQueue.add(finishCmd);
+    }
+    
+    @Override
+    public void beforeInitLayout() {
+		super.beforeInitLayout();
+		createCommandQueue();
+	}
     
     @Override
     protected void onMessageReceive(String msg) {
@@ -37,13 +55,16 @@ public class OBDClearErrorActivity extends JdyBaseActivity {
 				mTvClearResult.setText("清除故障码失败");
 			}
 	    	
-	    	mHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					LogUtils.d(TAG, "清除故障命令返回后，延迟1s下发停止指令");
-			    	sendMessage(BleCommandManager.Sender.COMMAND_FINISH);					
-				}
-			}, 1000);
+	    	final BleSendCommandModel nextSendModel = findNextSendCommand();
+	        if (nextSendModel != null) {
+	        	LogUtils.d(TAG,"nextTrySendModel: " + nextSendModel.getCommand());
+	            mMainHandler.postDelayed(new Runnable() {
+	                @Override
+	                public void run() {
+	                    sendMessage(nextSendModel);
+	                }
+	            }, 1000);
+	        }
 		}
 	}
     
@@ -69,5 +90,34 @@ public class OBDClearErrorActivity extends JdyBaseActivity {
         mTvClearResult = (TextView) findViewById(R.id.tv_result);
         
         bindBleService();
+    }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if (keyCode == KeyEvent.KEYCODE_BACK) {
+    		BleSendCommandModel sendCommandModel = findNextSendCommand();
+        	if(sendCommandModel != null) {
+        		sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
+        	}
+		}
+    	return super.onKeyDown(keyCode, event);
+    }
+    
+    @Override
+    public void onGoback() {
+    	BleSendCommandModel sendCommandModel = findNextSendCommand();
+    	if(sendCommandModel != null) {
+    		sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
+    	}
+		super.onGoback();
+	}
+    
+    private BleSendCommandModel findNextSendCommand(){
+        for (BleSendCommandModel model: mCommandQueue){
+            if (model.notSend()){
+                return model;
+            }
+        }
+        return null;
     }
 }

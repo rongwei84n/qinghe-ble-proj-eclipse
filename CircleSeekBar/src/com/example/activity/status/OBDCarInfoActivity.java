@@ -2,6 +2,7 @@ package com.example.activity.status;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,28 +47,35 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
         }
 	}
     
+    private void updateDateSource(String title, String value) {
+    	for (DataModel model : mDataSource) {
+			if (model.title.equals(title)) {
+				model.value = value;
+				return;
+			}
+		}
+    	//还没有保存这个数据，添加
+    	DataModel model = new DataModel(title, value);
+    	mDataSource.add(model);
+    	mAdapter.notifyDataSetChanged();
+    }
+    
     @Override
     protected void onMessageReceive(String msg) {
     	super.onMessageReceive(msg);
     	BleReceiveParsedModel receiveParsedModel = new BleReceiveParsedModel(msg);
     	if (BleCommandManager.Sender.COMMAND_READ_CARINFO.contains(receiveParsedModel.getSendCmd())){
     		if(receiveParsedModel.isResultSuccess()) {
-    			DataModel dataModel = new DataModel("车辆信息读取", "成功");
-    			mDataSource.add(dataModel);
+    			updateDateSource("车辆信息读取", "成功");
     		}else {
-    			DataModel dataModel = new DataModel("车辆信息读取", "失败");
-    			mDataSource.add(dataModel);
+    			updateDateSource("车辆信息读取", "失败");
     			ToastUtil.show(OBDCarInfoActivity.this, "读取车辆信息失败");
     		}
     	}else if(BleCommandManager.Sender.COMMAND_CAR_VID.contains(receiveParsedModel.getSendCmd())) {
-    		DataModel dataModel = new DataModel("车辆识别号", receiveParsedModel.getResultByIndex(0));
-			mDataSource.add(dataModel);
+			updateDateSource("车辆识别号", receiveParsedModel.getResultByIndex(0));
     	}else if(BleCommandManager.Sender.COMMAND_STANDARD_ID.contains(receiveParsedModel.getSendCmd())) {
-    		DataModel dataModel = new DataModel("标定识别号", receiveParsedModel.getResultByIndex(0));
-			mDataSource.add(dataModel);
+			updateDateSource("标定识别号", receiveParsedModel.getResultByIndex(0));
     	}
-    	
-    	mAdapter.notifyDataSetChanged();
     	
     	BleSendCommandModel presendCmd = findSendCmdByReceive(receiveParsedModel.getSendCmd());
         int delayTime = 0;
@@ -114,7 +122,7 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
     public void beforeInitLayout() {
 		super.beforeInitLayout();
 		createCommandQueue();
-	} 	
+	}
 
     @Override
     public void initLayout(Bundle savedInstanceState) {
@@ -135,6 +143,26 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
     protected void onResume() {
 		super.onResume();
 		bindBleService();
+	}
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if (keyCode == KeyEvent.KEYCODE_BACK) {
+    		BleSendCommandModel sendCommandModel = findNextSendCommand();
+        	if(sendCommandModel != null) {
+        		sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
+        	}
+		}
+    	return super.onKeyDown(keyCode, event);
+    }
+    
+    @Override
+    public void onGoback() {
+    	BleSendCommandModel sendCommandModel = findNextSendCommand();
+    	if(sendCommandModel != null) {
+    		sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
+    	}
+		super.onGoback();
 	}
 
     private void initDataSource(){

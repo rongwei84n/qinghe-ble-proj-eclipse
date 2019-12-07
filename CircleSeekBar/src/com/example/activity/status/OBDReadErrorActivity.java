@@ -3,6 +3,7 @@ package com.example.activity.status;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +33,7 @@ import java.util.List;
 public class OBDReadErrorActivity extends JdyBaseActivity {
 
     private ListView mListView;
-    private List<String> mDataSource;
+    private List<Pair<String, String>> mDataSource;
     private MyFuctionsAdapter mAdapter;
 
 
@@ -105,9 +106,10 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
                 LogUtils.e(TAG, e);
             }
             if (receiveParsedModel.isResultSuccess()){
-                mDataSource.add("故障个数: " + receiveParsedModel.getResultByIndex(0));
+            	mDataSource.add(new Pair<String, String>("故障个数: " + receiveParsedModel.getResultByIndex(0), 
+            			""));
             }else {
-            	mDataSource.add("读取故障个数失败"); 
+            	mDataSource.add(new Pair<String, String>("读取故障个数失败", ""));
             }
             mAdapter.notifyDataSetChanged();
 
@@ -176,23 +178,26 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
                 BleCommandManager.Sender.COMMAND_READ_ERROR_9.contains(receiveParsedModel.getSendCmd()) ||
                 BleCommandManager.Sender.COMMAND_READ_ERROR_10.contains(receiveParsedModel.getSendCmd())){
             if (receiveParsedModel.isResultSuccess()){
-            	StringBuilder sb = new StringBuilder();
-            	sb.append("故障码: ");
+            	StringBuilder sbTitle = new StringBuilder();
+            	sbTitle.append("故障码: ");
             	if (TextUtils.isEmpty(receiveParsedModel.getResultByIndex(0))) {
-            		sb.append("无");
+            		sbTitle.append("无");
 				}else {
-					sb.append(receiveParsedModel.getResultByIndex(0));
+					sbTitle.append(receiveParsedModel.getResultByIndex(0));
 				}
-            	sb.append(",");
-            	sb.append("故障描述:");
-            	if (TextUtils.isEmpty(receiveParsedModel.getResultByIndex(1))) {
-					sb.append("无");
+            	
+            	StringBuilder sbValue = new StringBuilder();
+            	sbValue.append("故障描述:");
+            	String desc = BleReceiveParsedModel.parseErrorDesc(receiveParsedModel.getResultByIndex(0));
+            	if (TextUtils.equals(desc, receiveParsedModel.getResultByIndex(0))) {
+            		sbValue.append("无");
 				}else {
-					sb.append(TextUtils.isEmpty(receiveParsedModel.getResultByIndex(1)));
+					sbValue.append(desc);
 				}
-                mDataSource.add(sb.toString());
+                mDataSource.add(new Pair<String, String>(sbTitle.toString(), sbValue.toString()));
             }else {
-                mDataSource.add("故障码读取错误: " + receiveParsedModel.getResultByIndex(0));
+            	mDataSource.add(new Pair<String, String>("故障码读取错误: " + receiveParsedModel.getResultByIndex(0), 
+            			""));
             }
 
             mAdapter.notifyDataSetChanged();
@@ -281,8 +286,8 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
     }
 
     private void initDataSource(){
-        mDataSource = new ArrayList<String>();
-        mDataSource.add("正在读取故障信息.");
+        mDataSource = new ArrayList<Pair<String, String>>();
+        mDataSource.add(new Pair<String, String>("正在读取故障信息.", ""));
     }
 
     private class MyFuctionsAdapter extends BaseAdapter {
@@ -308,14 +313,17 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null){
+//                convertView = LayoutInflater.from(OBDReadErrorActivity.this).inflate(
+//                        R.layout.listitem_common, null);
                 convertView = LayoutInflater.from(OBDReadErrorActivity.this).inflate(
-                        R.layout.listitem_common, null);
+                        android.R.layout.simple_list_item_2, null);
             }
-            TextView textView = (TextView) convertView.findViewById(R.id.tv_title);
-            textView.setText(mDataSource.get(position));
+            TextView textView1 = (TextView) convertView.findViewById(android.R.id.text1);
+            textView1.setText(mDataSource.get(position).first);
             
-            View rightView = convertView.findViewById(R.id.ll_right);
-            rightView.setVisibility(View.GONE);
+            TextView textView2 = (TextView) convertView.findViewById(android.R.id.text2);
+            textView2.setText(mDataSource.get(position).second);
+            
             return convertView;
         }
     }
