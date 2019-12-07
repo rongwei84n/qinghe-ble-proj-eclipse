@@ -70,7 +70,7 @@ import java.util.TimerTask;
 public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener{
     protected int repeatDelayTime = 5000;
 
-    private Handler mMainHandler = new Handler();
+    protected Handler mMainHandler = new Handler();
     
     protected AlertDialog mWaitDialog;
 

@@ -13,7 +13,7 @@ public class BleReceiveParsedModel {
     private String originResult;
     private boolean success = false;
     private List<String> results;
-    private String sendCmd;
+    private String sendCmd = "";
     
     public static final String ERROR_CODE_01 = "01";//不合法功能代码,Fxx_yyyy_z..z 中的xx非03或10，会报告此故障
     public static final String ERROR_CODE_02 = "02";//不合法数据地址
@@ -40,7 +40,7 @@ public class BleReceiveParsedModel {
 	}
 
     public BleReceiveParsedModel(String result){
-        LogUtils.d(TAG, "BleReceiveParsedModel init: " + result);
+        LogUtils.d(TAG, "BleReceiveParsedModel init string: " + result);
         if (result != null){
             result = result.replaceAll("\r", "");
         }
@@ -48,6 +48,8 @@ public class BleReceiveParsedModel {
         String error = parseError(result);
     	if (!TextUtils.isEmpty(error)) {
 			this.success = false;
+			results = new ArrayList<String>();
+			results.add(error);
     		return;
 		}
 
@@ -91,6 +93,9 @@ public class BleReceiveParsedModel {
     }
 
     public String getSendCmd(){
+    	if (sendCmd == null) {
+			return "";
+		}
         return sendCmd;
     }
 }

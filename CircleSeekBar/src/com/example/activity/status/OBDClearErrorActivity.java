@@ -1,6 +1,7 @@
 package com.example.activity.status;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,6 +20,8 @@ public class OBDClearErrorActivity extends JdyBaseActivity {
     private Button mBtnClear;
     private TextView mTvClearResult;
     
+    private Handler mHandler = new Handler();
+    
     @Override
     protected void onMessageReceive(String msg) {
 		super.onMessageReceive(msg);
@@ -34,8 +37,13 @@ public class OBDClearErrorActivity extends JdyBaseActivity {
 				mTvClearResult.setText("清除故障码失败");
 			}
 	    	
-	    	LogUtils.d(TAG, "清除故障命令返回后，下发停止指令");
-	    	sendMessage(BleCommandManager.Sender.COMMAND_FINISH);
+	    	mHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					LogUtils.d(TAG, "清除故障命令返回后，延迟1s下发停止指令");
+			    	sendMessage(BleCommandManager.Sender.COMMAND_FINISH);					
+				}
+			}, 1000);
 		}
 	}
     

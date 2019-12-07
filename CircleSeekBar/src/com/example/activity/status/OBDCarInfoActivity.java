@@ -95,12 +95,12 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
         
         BleSendCommandModel carVidCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_CAR_VID,
-                0);
+                500);
         mCommandQueue.add(carVidCmd);
         
         BleSendCommandModel standardIdCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_STANDARD_ID,
-                0);
+                1000);
         mCommandQueue.add(standardIdCmd);
         
         

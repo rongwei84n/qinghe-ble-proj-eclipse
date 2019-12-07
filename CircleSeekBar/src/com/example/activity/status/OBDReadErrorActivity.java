@@ -202,6 +202,7 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         		mWaitDialog = null;
         	}
         	finish();
+        	return;
         }
 
         BleSendCommandModel presendCmd = findSendCmdByReceive(receiveParsedModel.getSendCmd());
