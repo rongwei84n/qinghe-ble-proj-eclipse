@@ -137,10 +137,10 @@ public class PageHomeActivity extends JdyBaseActivity {
 				builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						mDeviceModels.remove(position);
 						DeviceLogic.removeDevice(PageHomeActivity.this, mDeviceModels.get(position).getDeviceName(), 
 								mDeviceModels.get(position).getDeviceAddress(), 
 								mDeviceModels.get(position).getModuleID());
+						mDeviceModels.remove(position);
 						mAdapter.notifyDataSetChanged();
 					}
 				});
@@ -155,6 +155,7 @@ public class PageHomeActivity extends JdyBaseActivity {
         showIvMenu(R.drawable.add);
 
         Button btnGoTaobao = (Button) findViewById(R.id.btn_go_taobao);
+        btnGoTaobao.setVisibility(View.GONE);
         btnGoTaobao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,6 +164,16 @@ public class PageHomeActivity extends JdyBaseActivity {
                 startActivity(intent);
             }
         });
+        
+        mIvMenu.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				LogUtils.d(TAG, "长按跳转到淘宝的原来页面");
+                Intent intent = new Intent(PageHomeActivity.this, DeviceScanActivity.class);
+                startActivity(intent);
+				return true;
+			}
+		});
     }
 
     @Override
