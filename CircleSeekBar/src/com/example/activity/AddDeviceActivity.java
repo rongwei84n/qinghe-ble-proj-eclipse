@@ -43,7 +43,7 @@ import com.example.utils.ListUtils;
 import com.example.utils.LogUtils;
 import com.example.utils.ToastUtil;
 
-public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickListener {
+public class AddDeviceActivity extends JdyBaseActivity {
     // private LeDeviceListAdapter mLeDeviceListAdapter;
     Get_type mGet_type;
     private boolean mScanning;
@@ -133,14 +133,21 @@ public class AddDeviceActivity extends JdyBaseActivity implements View.OnClickLi
         mTvTitle.setText("蓝牙绑定");
 
         mHandler = new Handler();
-        Button btnSearch = (Button) findViewById(R.id.btn_search);
-        btnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LogUtils.d(TAG, "点击搜索蓝牙按钮");
+        showTvMenu("搜索蓝牙");
+        mTvMenu.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				LogUtils.d(TAG, "点击mTvMenu搜索蓝牙");
                 scanLeDevice(true);
-            }
-        });
+			}
+		});
+        mIvBack.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				LogUtils.d(TAG, "点击mIvBack退出界面");
+				finish();
+			}
+		});
 
         lv_bleList = (ListView) findViewById(R.id.lv_bleList);
 
