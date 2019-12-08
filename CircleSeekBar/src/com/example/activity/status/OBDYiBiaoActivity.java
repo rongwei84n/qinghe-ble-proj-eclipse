@@ -48,7 +48,7 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         	LogUtils.d(TAG, "车速读取返回" + receiveParsedModel.getResultByIndex(0));
         }else if (BleCommandManager.Sender.COMMAND_RAND.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "发动机转速读取返回" );
-        	mTvRandSpeed.setText(receiveParsedModel.getResultByIndex(0));
+        	mTvRandSpeed.setText("发动机转速：" + receiveParsedModel.getResultByIndex(0));
         	String pureData = receiveParsedModel.getResultByIndex(0);
         	if (!TextUtils.isEmpty(pureData)) {
         		pureData = pureData.replace("rpmi", "");
@@ -66,10 +66,14 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
 			}
         }else if (BleCommandManager.Sender.COMMAND_TEMPTURE.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "发动机温度读取返回");
-        	mTvTempture.setText(receiveParsedModel.getResultByIndex(0));
+        	String temp = receiveParsedModel.getResultByIndex(0);
+        	if (temp != null) {
+        		temp = temp.replace("C", "").replace("c", "").concat("摄氏度");
+			}
+        	mTvTempture.setText("发动机温度：" + temp);
         }else if (BleCommandManager.Sender.COMMAND_BATTARY_V.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "蓄电池读取返回");
-        	mTvDianya.setText(receiveParsedModel.getResultByIndex(0));
+        	mTvDianya.setText("电压：" + receiveParsedModel.getResultByIndex(0));
         }else if(BleCommandManager.Sender.COMMAND_FINISH.contains(receiveParsedModel.getSendCmd())) {
         	LogUtils.d(TAG, "结束指令读取返回");
         	if(mWaitDialog != null) {
@@ -176,7 +180,7 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         mTvTitle.setText("仪表");
         mDashboardViewLiCheng = (DashboardView) findViewById(R.id.dbv_licheng);
         mDhZhuansu = (DashboardView) findViewById(R.id.dbv_zhuansu);
-        mDhZhuansu.setHeaderTitle("rpmi");
+        mDhZhuansu.setHeaderTitle("转速");
         mDhZhuansu.setAnimEnable(true);
         
         mTvRandSpeed = (TextView) findViewById(R.id.tv_rs);

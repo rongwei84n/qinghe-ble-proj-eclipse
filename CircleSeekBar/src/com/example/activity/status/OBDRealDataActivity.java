@@ -1,6 +1,7 @@
 package com.example.activity.status;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -116,13 +117,21 @@ public class OBDRealDataActivity extends JdyBaseActivity {
             updateDateSource("发动机转速", receiveParsedModel.getResultByIndex(0));
         }else if (BleCommandManager.Sender.COMMAND_TEMPTURE.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "发动机温度读取返回");
-            updateDateSource("发动机温度", receiveParsedModel.getResultByIndex(0));
+        	String temp = receiveParsedModel.getResultByIndex(0);
+        	if (temp != null) {
+        		temp = temp.replace("C", "").replace("c", "").concat("摄氏度");
+			}
+            updateDateSource("发动机温度", temp);
         }else if (BleCommandManager.Sender.COMMAND_BATTARY_V.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "蓄电池读取返回");
             updateDateSource("蓄电池电压", receiveParsedModel.getResultByIndex(0));
         }else if (BleCommandManager.Sender.COMMAND_XIQI_TEMPTURE.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "吸气温度读取返回");
-            updateDateSource("吸气温度", receiveParsedModel.getResultByIndex(0));
+        	String temp = receiveParsedModel.getResultByIndex(0);
+        	if (temp != null) {
+        		temp = temp.replace("C", "").replace("c", "").concat("摄氏度");
+			}
+            updateDateSource("吸气温度", temp);
         }else if (BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "进气管压力读取返回");
             updateDateSource("进气管压力", receiveParsedModel.getResultByIndex(0));

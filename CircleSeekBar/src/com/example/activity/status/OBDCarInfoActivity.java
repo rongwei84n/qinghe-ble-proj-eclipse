@@ -2,6 +2,7 @@ package com.example.activity.status;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,17 +67,35 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
     	BleReceiveParsedModel receiveParsedModel = new BleReceiveParsedModel(msg);
     	if (BleCommandManager.Sender.COMMAND_READ_CARINFO.contains(receiveParsedModel.getSendCmd())){
     		if(receiveParsedModel.isResultSuccess()) {
-    			updateDateSource("车辆信息读取", "成功");
+//    			updateDateSource("车辆信息读取", "成功");
     		}else {
-    			updateDateSource("车辆信息读取", "失败");
+//    			updateDateSource("车辆信息读取", "失败");
     			ToastUtil.show(OBDCarInfoActivity.this, "读取车辆信息失败");
     		}
     	}else if(BleCommandManager.Sender.COMMAND_CAR_VID.contains(receiveParsedModel.getSendCmd())) {
-			updateDateSource("车辆识别号", receiveParsedModel.getResultByIndex(0));
+			String result = receiveParsedModel.getResultByIndex(0);
+    		if (!TextUtils.isEmpty(result)) {
+				try {
+					//尝试转化成16进制
+					Integer resultInt = Integer.parseInt(result);
+					result = Integer.toHexString(resultInt);
+				} catch (Exception e) {
+				}
+			}
+    		updateDateSource("车辆识别号", result);
     	}else if(BleCommandManager.Sender.COMMAND_STANDARD_ID.contains(receiveParsedModel.getSendCmd())) {
 			updateDateSource("标定识别号", receiveParsedModel.getResultByIndex(0));
     	}else if(BleCommandManager.Sender.COMMAND_CVN.contains(receiveParsedModel.getSendCmd())) {
-			updateDateSource("校准核查码(CVN)", receiveParsedModel.getResultByIndex(0));
+    		String result = receiveParsedModel.getResultByIndex(0);
+    		if (!TextUtils.isEmpty(result)) {
+				try {
+					//尝试转化成16进制
+					Integer resultInt = Integer.parseInt(result);
+					result = Integer.toBinaryString(resultInt);
+				} catch (Exception e) {
+				}
+			}
+			updateDateSource("校准核查码(CVN)", result);
     	}
     	
     	BleSendCommandModel presendCmd = findSendCmdByReceive(receiveParsedModel.getSendCmd());
