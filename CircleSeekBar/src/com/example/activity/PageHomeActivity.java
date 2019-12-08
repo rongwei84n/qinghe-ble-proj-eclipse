@@ -132,7 +132,7 @@ public class PageHomeActivity extends JdyBaseActivity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(PageHomeActivity.this);
 				builder.setTitle("确认");
-				builder.setMessage("是否要删除" + mDeviceModels.get(position).getDeviceName() 
+				builder.setMessage("确定要删除" + mDeviceModels.get(position).getDeviceName() 
 						+ "_" + mDeviceModels.get(position).getModuleID() + "吗?");
 				builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
 					@Override
@@ -180,9 +180,9 @@ public class PageHomeActivity extends JdyBaseActivity {
     protected void onResume() {
         super.onResume();
         mReceiveConnectResponse = false;
-        updateEmptyView();
         mDeviceModels = DeviceLogic.getAllBleDevices(this);
         mAdapter.notifyDataSetChanged();
+        updateEmptyView();
         LogUtils.d(TAG, "onResume");
     }
 
