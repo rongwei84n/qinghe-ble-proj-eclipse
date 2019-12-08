@@ -49,7 +49,6 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         }else if (BleCommandManager.Sender.COMMAND_RAND.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "发动机转速读取返回" );
         	mTvRandSpeed.setText(receiveParsedModel.getResultByIndex(0));
-        	
         	String pureData = receiveParsedModel.getResultByIndex(0);
         	if (!TextUtils.isEmpty(pureData)) {
         		pureData = pureData.replace("rpmi", "");
