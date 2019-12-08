@@ -12,6 +12,8 @@
         android:background="#212121">
         <include
             layout="@layout/include_common_header" />
+        <include layout="@layout/include_jdy_base_common"
+            android:visibility="gone"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +24,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="50    C"
+                android:text="正在获取温度"
                 android:textColor="@color/white"/>
             <TextView
                 android:id="@+id/tv_rs"
@@ -30,7 +32,7 @@
                 android:layout_toLeftOf="@id/tv_temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1000    r/s"
+                android:text="正在获取转速"
                 android:textColor="@color/white"/>
         </RelativeLayout>
         <RelativeLayout
@@ -43,7 +45,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12    v"
+                android:text="正在获取电压"
                 android:textColor="@color/white"/>
             <TextView
                 android:id="@+id/tv_lh"
@@ -51,7 +53,7 @@
                 android:layout_toLeftOf="@id/tv_v"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1000    L/H"
+                android:text="正在获取.."
                 android:textColor="@color/white"/>
         </RelativeLayout>
 
@@ -81,11 +83,11 @@
             app:bigSliceCount="12"
             app:headerRadius="50dp"
             app:headerTitle="km/h"
-            app:maxValue="240"
+            app:maxValue="2000"
             app:measureTextSize="10sp"
             app:radius="110dp"
             app:sliceCountInOneBigSlice="2"
-            app:realTimeValue="80"
+            app:realTimeValue="0"
             app:startAngle="170"
             app:stripeMode="inner"
             app:stripeWidth="40dp"

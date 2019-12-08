@@ -1,32 +1,175 @@
 package com.example.activity.status;
 
-import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.widget.TextView;
 
 import com.lee.circleseekbar.R;
-import com.example.activity.BaseActivity;
 import com.example.activity.JdyBaseActivity;
+import com.example.model.BleReceiveParsedModel;
+import com.example.model.BleSendCommandModel;
+import com.example.utils.BleCommandManager;
+import com.example.utils.LogUtils;
+import com.example.utils.ToastUtil;
 import com.example.views.DashboardView;
 import com.example.views.HighlightCR;
-//import com.github.mikephil.charting.animation.Easing;
-//import com.github.mikephil.charting.charts.PieChart;
-//import com.github.mikephil.charting.components.Legend;
-//import com.github.mikephil.charting.data.Entry;
-//import com.github.mikephil.charting.data.PieData;
-//import com.github.mikephil.charting.data.PieDataSet;
-//import com.github.mikephil.charting.formatter.PercentFormatter;
-//import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class OBDYiBiaoActivity extends JdyBaseActivity {
-//    private PieChart mPieChart;
-    private DashboardView mDashboardView;
+    private DashboardView mDashboardViewLiCheng;
+    private DashboardView mDhZhuansu;
+    private List<BleSendCommandModel> mCommandQueue;
+    private List<BleSendCommandModel> mRepeatCommandList = new ArrayList<BleSendCommandModel>();
+    
+    private TextView mTvRandSpeed; //转速
+    private TextView mTvTempture;//温度
+    private TextView mTvDianya; //电压
+    private TextView mTvLh;//LH  //油耗
+    
+    private Handler mHandler = new Handler();
+    
+    public void beforeInitLayout() {
+		super.beforeInitLayout();
+		createCommandQueue();
+	}
+    
+    @Override
+    protected void onMessageReceive(String msg) {
+    	super.onMessageReceive(msg);
+        BleReceiveParsedModel receiveParsedModel = new BleReceiveParsedModel(msg);
+        if (BleCommandManager.Sender.COMMAND_REAL_DATA.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "仪表盘实时数据返回");
+        }else if (BleCommandManager.Sender.COMMAND_SPEED.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "车速读取返回" + receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_RAND.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "发动机转速读取返回" );
+        	mTvRandSpeed.setText(receiveParsedModel.getResultByIndex(0));
+        	
+        	String pureData = receiveParsedModel.getResultByIndex(0);
+        	if (!TextUtils.isEmpty(pureData)) {
+        		pureData = pureData.replace("rpmi", "");
+        		try {
+					int pureDataInt = Integer.parseInt(pureData);
+					mDhZhuansu.mButtonCenterStr = receiveParsedModel.getResultByIndex(0);
+					if (pureDataInt < 2000) {
+						mDhZhuansu.setMaxValue(2000);
+					}else {
+						mDhZhuansu.setMaxValue(pureDataInt + 1500);
+					}
+					mDhZhuansu.setRealTimeValue(pureDataInt);
+				} catch (Exception e) {
+				}
+			}
+        }else if (BleCommandManager.Sender.COMMAND_TEMPTURE.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "发动机温度读取返回");
+        	mTvTempture.setText(receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_BATTARY_V.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "蓄电池读取返回");
+        	mTvDianya.setText(receiveParsedModel.getResultByIndex(0));
+        }else if(BleCommandManager.Sender.COMMAND_FINISH.contains(receiveParsedModel.getSendCmd())) {
+        	LogUtils.d(TAG, "结束指令读取返回");
+        	if(mWaitDialog != null) {
+        		mWaitDialog.dismiss();
+        		mWaitDialog = null;
+        	}
+        	finish();
+        	return;
+        }else {
+        	LogUtils.d(TAG, "未知指令读取返回");
+        	return;
+        }
+
+        BleSendCommandModel presendCmd = findSendCmdByReceive(receiveParsedModel.getSendCmd());
+        int delayTime = 0;
+        if (presendCmd != null){
+            delayTime = presendCmd.getDelayTime();
+        }
+        BleSendCommandModel nextSendModel = findNextSendCommand();
+        if (nextSendModel == null){
+            nextSendModel = findNextRepeatCommand();
+            if (nextSendModel != null) {
+            	delayTime = nextSendModel.getDelayTime();
+			}
+        }
+        final BleSendCommandModel nextTrySendModel = nextSendModel;
+        if (nextTrySendModel != null) {
+        	LogUtils.d(TAG,"nextTrySendModel: " + nextTrySendModel.getCommand() + " delay: " + delayTime);
+        	mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    sendMessage(nextTrySendModel);
+                }
+            }, delayTime);
+        }
+    }
+    
+    @Override
+    protected void onBleConnectSuccess() {
+        super.onBleConnectSuccess();
+        ToastUtil.show(OBDYiBiaoActivity.this, "蓝牙连接成功，正在读取数信息，请稍候...");
+		final BleSendCommandModel sendCommandModel = findNextSendCommand();
+        if (sendCommandModel != null){
+        	mHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					sendMessage(sendCommandModel);
+				}
+			}, 2000);
+        }
+    }
+
+    private BleSendCommandModel findSendCmdByReceive(String msg){
+        for (BleSendCommandModel model: mCommandQueue){
+            if (model.getCommand().contains(msg)){
+                return model;
+            }
+        }
+        return null;
+    }
+    
+    private BleSendCommandModel findNextSendCommand(){
+        for (BleSendCommandModel model: mCommandQueue){
+            if (model.notSend()){
+            	LogUtils.d(TAG, "findNextSendCommand");
+                return model;
+            }
+        }
+        LogUtils.d(TAG, "not findNextSendCommand");
+        return null;
+    }
+    
+    private BleSendCommandModel findNextRepeatCommand(){
+        if (mRepeatCommandList == null || mRepeatCommandList.isEmpty()){
+        	LogUtils.d(TAG, "findNextRepeatCommand 1");
+            return null;
+        }
+        for (BleSendCommandModel model: mRepeatCommandList){
+            if (model.notSend()){
+            	LogUtils.d(TAG, "findNextRepeatCommand 2");
+                return model;
+            }
+        }
+
+        //如果已经遍历完了所有的待发队列，直接把待发队列设置成初始化状态，从头遍历.
+        for (BleSendCommandModel model: mRepeatCommandList){
+            model.setStatus(BleSendCommandModel.SendCmdStatus.STATUS_INIT);
+        }
+        LogUtils.d(TAG, "findNextRepeatCommand 3");
+        for (BleSendCommandModel model: mRepeatCommandList){
+            if (model.notSend()){
+            	LogUtils.d(TAG, "findNextRepeatCommand 4");
+                return model;
+            }
+        }
+
+        LogUtils.d(TAG, "findNextRepeatCommand 5");
+        return null;
+    }
 
     @Override
     public void initLayout(Bundle savedInstanceState) {
@@ -37,132 +180,96 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
     public void afterInitView() {
     	super.afterInitView();
         mTvTitle.setText("仪表");
-        mDashboardView = (DashboardView) findViewById(R.id.dbv_licheng);
+        mDashboardViewLiCheng = (DashboardView) findViewById(R.id.dbv_licheng);
+        mDhZhuansu = (DashboardView) findViewById(R.id.dbv_zhuansu);
+        mDhZhuansu.setHeaderTitle("rpmi");
+        mDhZhuansu.setAnimEnable(true);
+        
+        mTvRandSpeed = (TextView) findViewById(R.id.tv_rs);
+        mTvTempture = (TextView) findViewById(R.id.tv_temperature);
+        mTvDianya = (TextView) findViewById(R.id.tv_v);
+        mTvLh = (TextView) findViewById(R.id.tv_lh);
 
         List<HighlightCR> highlight2 = new ArrayList<HighlightCR>();
         highlight2.add(new HighlightCR(170, 140, Color.BLUE));
         highlight2.add(new HighlightCR(310, 60, Color.GREEN));
-        mDashboardView.setStripeHighlightColorAndRange(highlight2);
-        mDashboardView.mButtonCenterStr = "86%";
-
-
-//        initBingtu();
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setMessage("仪表盘的里程碑圆圈效果图需要另外重新绘制，这只是一个展示");
-//        builder.setPositiveButton("确定", null);
-//        builder.setCancelable(true);
-//        builder.show();
+        mDashboardViewLiCheng.setStripeHighlightColorAndRange(highlight2);
+        mDashboardViewLiCheng.mButtonCenterStr = "86%";
+        bindBleService();
     }
-
-//    private void initBingtu(){
-//        mPieChart = (PieChart) findViewById(R.id.pie_chart);
-//
-//        // 显示百分比
-//        mPieChart.setUsePercentValues(true);
-//        // 描述信息
-//        mPieChart.setDescription("里程");
-//        // 设置偏移量
-//        mPieChart.setExtraOffsets(5, 10, 5, 5);
-//        // 设置滑动减速摩擦系数
-//        mPieChart.setDragDecelerationFrictionCoef(0.95f);
-//
-////        mPieChart.setCenterText("里程");
-//        /*
-//            设置饼图中心是否是空心的
-//            true 中间是空心的，环形图
-//            false 中间是实心的 饼图
-//         */
-//        mPieChart.setDrawHoleEnabled(false);
-//        /*
-//            设置中间空心圆孔的颜色是否透明
-//            true 透明的
-//            false 非透明的
-//         */
-//        mPieChart.setHoleColorTransparent(true);
-//        // 设置环形图和中间空心圆之间的圆环的颜色
-//        mPieChart.setTransparentCircleColor(Color.WHITE);
-//        // 设置环形图和中间空心圆之间的圆环的透明度
-//        mPieChart.setTransparentCircleAlpha(110);
-//
-//        // 设置圆孔半径
-//        mPieChart.setHoleRadius(58f);
-//        // 设置空心圆的半径
-//        mPieChart.setTransparentCircleRadius(61f);
-//        // 设置是否显示中间的文字
-//        mPieChart.setDrawCenterText(true);
-//
-//
-//        // 设置旋转角度
-//        mPieChart.setRotationAngle(0);
-//        // enable rotation of the chart by touch
-//        mPieChart.setRotationEnabled(true);
-//        mPieChart.setHighlightPerTapEnabled(false);
-//
-//        // add a selection listener
-//        // mPieChart.setOnChartValueSelectedListener(this);
-//
-//        TreeMap<String, Float> data = new TreeMap<>();
-//        data.put("合格率", 0.86f);
-//        data.put("data2", 0.14f);
-//        setData(data);
-//
-//        // 设置动画
-//        mPieChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
-//
-//        // 设置显示的比例
-//        Legend l = mPieChart.getLegend();
-//        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
-//        l.setXEntrySpace(7f);
-//        l.setYEntrySpace(0f);
-//        l.setYOffset(0f);
-//    }
-
-//    public void setData(TreeMap<String, Float> data) {
-//        ArrayList<String> xVals = new ArrayList<String>();
-//        ArrayList<Entry> yVals1 = new ArrayList<Entry>();
-//
-//        int i = 0;
-//        Iterator it = data.entrySet().iterator();
-//        while (it.hasNext()) {
-//            // entry的输出结果如key0=value0等
-//            Map.Entry entry = (Map.Entry) it.next();
-//            String key = (String) entry.getKey();
-//            float value = (float) entry.getValue();
-//            xVals.add(key);
-//            yVals1.add(new Entry(value, i++));
-//        }
-//
-//        PieDataSet dataSet = new PieDataSet(yVals1, "Election Results");
-//        // 设置饼图区块之间的距离
-//        dataSet.setSliceSpace(2f);
-//        dataSet.setSelectionShift(5f);
-//
-//        // 添加颜色
-//        ArrayList<Integer> colors = new ArrayList<Integer>();
-//        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-//            colors.add(c);
-//        for (int c : ColorTemplate.JOYFUL_COLORS)
-//            colors.add(c);
-//        for (int c : ColorTemplate.COLORFUL_COLORS)
-//            colors.add(c);
-//        for (int c : ColorTemplate.LIBERTY_COLORS)
-//            colors.add(c);
-//        for (int c : ColorTemplate.PASTEL_COLORS)
-//            colors.add(c);
-//        colors.add(ColorTemplate.getHoloBlue());
-//        dataSet.setColors(colors);
-//        // dataSet.setSelectionShift(0f);
-//
-//        PieData data1 = new PieData(xVals, dataSet);
-//        data1.setValueFormatter(new PercentFormatter());
-//        data1.setValueTextSize(10f);
-//        data1.setValueTextColor(Color.BLACK);
-//        mPieChart.setData(data1);
-//
-//        // undo all highlights
-//        mPieChart.highlightValues(null);
-//
-//        mPieChart.invalidate();
-//    }
-
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if (keyCode == KeyEvent.KEYCODE_BACK) {
+    		LogUtils.d(TAG, "onKeyDown KEYCODE_BACK");
+    		onExit();
+    		return true;
+		}
+    	return super.onKeyDown(keyCode, event);
+    }
+    
+    @Override
+    public void onGoback() {
+    	LogUtils.d(TAG, "onGoback");
+    	onExit();
+    }
+    
+    private void createCommandQueue(){
+        mCommandQueue = new ArrayList<BleSendCommandModel>();
+        BleSendCommandModel startRealData = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_REAL_DATA,
+                1000);
+        mCommandQueue.add(startRealData);
+        
+        BleSendCommandModel speedCommand = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_SPEED,
+                1000);
+        mCommandQueue.add(speedCommand);
+        BleSendCommandModel rpfirst = new BleSendCommandModel(speedCommand);
+        rpfirst.setDelayTime(repeatDelayTime);
+        mRepeatCommandList.add(rpfirst);
+        
+        BleSendCommandModel randCommand = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_RAND,
+                1000);
+        mCommandQueue.add(randCommand);
+        mRepeatCommandList.add(new BleSendCommandModel(randCommand));
+        
+        BleSendCommandModel temptureCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_TEMPTURE,
+                1000);
+        mCommandQueue.add(temptureCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(temptureCmd));
+        
+        BleSendCommandModel battaryVCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_BATTARY_V,
+                1000);
+        mCommandQueue.add(battaryVCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(battaryVCmd));
+        
+//        BleSendCommandModel xiqiTempCmd = new BleSendCommandModel(
+//                BleCommandManager.Sender.COMMAND_XIQI_TEMPTURE,
+//                1000);
+//        mCommandQueue.add(xiqiTempCmd);
+        
+//        BleSendCommandModel jiqiguanPressCmd = new BleSendCommandModel(
+//                BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS,
+//                1000);
+//        mCommandQueue.add(jiqiguanPressCmd);
+        
+//        BleSendCommandModel chepaiVidCmd = new BleSendCommandModel(
+//                BleCommandManager.Sender.COMMAND_CHEPAI_VID,
+//                1000);
+//        mCommandQueue.add(chepaiVidCmd);
+//        
+//        BleSendCommandModel biaodingIdCmd = new BleSendCommandModel(
+//                BleCommandManager.Sender.COMMAND_BIAODING_ID,
+//                1000);
+//        mCommandQueue.add(biaodingIdCmd);
+//        
+//        BleSendCommandModel cvnCmd = new BleSendCommandModel(
+//                BleCommandManager.Sender.COMMAND_CVN,
+//                1000);
+//        mCommandQueue.add(cvnCmd);
+    }
 }

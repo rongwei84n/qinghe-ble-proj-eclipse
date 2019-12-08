@@ -63,28 +63,28 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         return null;
     }
 
-//    private BleSendCommandModel findNextRepeatCommand(){
-//        if (mRepeatCommandList == null || mRepeatCommandList.isEmpty()){
-//            return null;
-//        }
-//        for (BleSendCommandModel model: mRepeatCommandList){
-//            if (model.notSend()){
-//                return model;
-//            }
-//        }
-//
-//        //如果已经遍历完了所有的待发队列，直接把待发队列设置成初始化状态，从头遍历.
-//        for (BleSendCommandModel model: mRepeatCommandList){
-//            model.setStatus(BleSendCommandModel.SendCmdStatus.STATUS_INIT);
-//        }
-//        for (BleSendCommandModel model: mRepeatCommandList){
-//            if (model.notSend()){
-//                return model;
-//            }
-//        }
-//
-//        return null;
-//    }
+    private BleSendCommandModel findNextRepeatCommand(){
+        if (mRepeatCommandList == null || mRepeatCommandList.isEmpty()){
+            return null;
+        }
+        for (BleSendCommandModel model: mRepeatCommandList){
+            if (model.notSend()){
+                return model;
+            }
+        }
+
+        //如果已经遍历完了所有的待发队列，直接把待发队列设置成初始化状态，从头遍历.
+        for (BleSendCommandModel model: mRepeatCommandList){
+            model.setStatus(BleSendCommandModel.SendCmdStatus.STATUS_INIT);
+        }
+        for (BleSendCommandModel model: mRepeatCommandList){
+            if (model.notSend()){
+                return model;
+            }
+        }
+
+        return null;
+    }
 
     private BleSendCommandModel findNextSendCommand(){
         for (BleSendCommandModel model: mCommandQueue){
@@ -188,7 +188,7 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
             	
             	StringBuilder sbValue = new StringBuilder();
             	sbValue.append("故障描述:");
-            	String desc = BleReceiveParsedModel.parseErrorDesc(receiveParsedModel.getResultByIndex(0));
+            	String desc = BleReceiveParsedModel.parseFaultDesc(receiveParsedModel.getResultByIndex(0));
             	if (TextUtils.equals(desc, receiveParsedModel.getResultByIndex(0))) {
             		sbValue.append("无");
 				}else {
@@ -199,7 +199,6 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
             	mDataSource.add(new Pair<String, String>("故障码读取错误: " + receiveParsedModel.getResultByIndex(0), 
             			""));
             }
-
             mAdapter.notifyDataSetChanged();
         }else if(BleCommandManager.Sender.COMMAND_FINISH.contains(receiveParsedModel.getSendCmd())) {
         	if(mWaitDialog != null) {
@@ -216,10 +215,10 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
             delayTime = presendCmd.getDelayTime();
         }
         BleSendCommandModel nextSendModel = findNextSendCommand();
-//        if (nextSendModel == null){
-//            nextSendModel = findNextRepeatCommand();
-//            delayTime = repeatDelayTime;
-//        }
+        if (nextSendModel == null){
+            nextSendModel = findNextRepeatCommand();
+            delayTime = repeatDelayTime;
+        }
         final BleSendCommandModel nextTrySendModel = nextSendModel;
         if (nextTrySendModel != null) {
         	LogUtils.d(TAG,"nextTrySendModel: " + nextTrySendModel.getCommand());

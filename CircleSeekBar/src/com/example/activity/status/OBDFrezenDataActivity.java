@@ -2,6 +2,7 @@ package com.example.activity.status;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,19 +65,68 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         return null;
     }
     
+    private void updateDateSource(String title, String value) {
+    	for (DataModel model : mDataSource) {
+			if (model.title.equals(title)) {
+				model.value = value;
+				return;
+			}
+		}
+    	//还没有保存这个数据，添加
+    	DataModel model = new DataModel(title, value);
+    	mDataSource.add(model);
+    	mAdapter.notifyDataSetChanged();
+    }
+    
     @Override
     protected void onMessageReceive(String msg) {
     	super.onMessageReceive(msg);
     	BleReceiveParsedModel receiveParsedModel = new BleReceiveParsedModel(msg);
     	if (BleCommandManager.Sender.COMMAND_FREZEN_DATA.contains(receiveParsedModel.getSendCmd())){
+    		LogUtils.d(TAG, "车速读取返回:  " + receiveParsedModel.isResultSuccess());
     		if(receiveParsedModel.isResultSuccess()) {
-    			DataModel dataModel = new DataModel("车辆数据冻结", "成功");
-    			mDataSource.add(dataModel);
+    			updateDateSource("车辆数据冻结", "成功");
     		}else {
-    			DataModel dataModel = new DataModel("车辆数据冻结", "失败");
-    			mDataSource.add(dataModel);
+    			updateDateSource("车辆数据冻结", "失败");
     		}
-    	}
+    	}else if (BleCommandManager.Sender.COMMAND_SPEED.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "车速读取返回");
+            updateDateSource("车速", receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_RAND.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "发动机转速读取返回");
+            updateDateSource("发动机转速", receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_TEMPTURE.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "发动机温度读取返回");
+            updateDateSource("发动机温度", receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_BATTARY_V.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "蓄电池读取返回");
+            updateDateSource("蓄电池电压", receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_XIQI_TEMPTURE.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "吸气温度读取返回");
+            updateDateSource("吸气温度", receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "进气管压力读取返回");
+            updateDateSource("进气管压力", receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_CHEPAI_VID.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "车牌识别号VID读取返回");
+            updateDateSource("车辆识别号VID", receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_BIAODING_ID.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "标定识别ID读取返回");
+            updateDateSource("标定识别ID", receiveParsedModel.getResultByIndex(0));
+        }else if (BleCommandManager.Sender.COMMAND_CVN.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "校准核查码读取返回");
+            updateDateSource("校准核查码(CVN)", receiveParsedModel.getResultByIndex(0));
+        }else if(BleCommandManager.Sender.COMMAND_FINISH.contains(receiveParsedModel.getSendCmd())) {
+        	LogUtils.d(TAG, "结束指令读取返回");
+        	if(mWaitDialog != null) {
+        		mWaitDialog.dismiss();
+        		mWaitDialog = null;
+        	}
+        	finish();
+        	return;
+        }else {
+        	LogUtils.d(TAG, "未知指令读取返回");
+        }
     	
     	mAdapter.notifyDataSetChanged();
     	
@@ -105,6 +155,51 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
                 BleCommandManager.Sender.COMMAND_FREZEN_DATA,
                 100);
         mCommandQueue.add(frezenCmd);
+        
+        BleSendCommandModel speedCommand = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_SPEED,
+                1000);
+        mCommandQueue.add(speedCommand);
+        
+        BleSendCommandModel randCommand = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_RAND,
+                1000);
+        mCommandQueue.add(randCommand);
+        
+        BleSendCommandModel temptureCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_TEMPTURE,
+                1000);
+        mCommandQueue.add(temptureCmd);
+        
+        BleSendCommandModel battaryVCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_BATTARY_V,
+                1000);
+        mCommandQueue.add(battaryVCmd);
+        
+        BleSendCommandModel xiqiTempCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_XIQI_TEMPTURE,
+                1000);
+        mCommandQueue.add(xiqiTempCmd);
+        
+        BleSendCommandModel jiqiguanPressCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS,
+                1000);
+        mCommandQueue.add(jiqiguanPressCmd);
+        
+        BleSendCommandModel chepaiVidCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_CHEPAI_VID,
+                1000);
+        mCommandQueue.add(chepaiVidCmd);
+        
+        BleSendCommandModel biaodingIdCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_BIAODING_ID,
+                1000);
+        mCommandQueue.add(biaodingIdCmd);
+        
+        BleSendCommandModel cvnCmd = new BleSendCommandModel(
+                BleCommandManager.Sender.COMMAND_CVN,
+                1000);
+        mCommandQueue.add(cvnCmd);
         
         BleSendCommandModel finishCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_FINISH,
@@ -137,6 +232,22 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         mListView = (ListView) findViewById(R.id.lv_functionlist);
         mAdapter = new MyFuctionsAdapter();
         mListView.setAdapter(mAdapter);
+    }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if (keyCode == KeyEvent.KEYCODE_BACK) {
+    		LogUtils.d(TAG, "onKeyDown KEYCODE_BACK");
+    		onExit();
+    		return true;
+		}
+    	return super.onKeyDown(keyCode, event);
+    }
+    
+    @Override
+    public void onGoback() {
+    	LogUtils.d(TAG, "onGoback");
+    	onExit();
     }
 
     private void initDataSource(){

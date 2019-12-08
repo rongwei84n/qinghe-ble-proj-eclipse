@@ -21,8 +21,12 @@ public class BleSendCommandModel {
     public String getCommand() {
         return command;
     }
+    
+    public void setDelayTime(int delayTime) {
+		this.delayTime = delayTime;
+	}
 
-    public int getDelayTime() {
+	public int getDelayTime() {
         return delayTime;
     }
 

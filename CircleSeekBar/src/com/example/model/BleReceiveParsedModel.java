@@ -151,7 +151,24 @@ public class BleReceiveParsedModel {
         return sendCmd;
     }
     
-    public static String parseErrorDesc(String errorCode) {
+    public static String parseErrorDesc(String result) {
+    	if (result.equals(ERROR_CODE_01)) {
+			return "不合法功能代码";
+		}else if(result.equals(ERROR_CODE_02)) {
+			return "不合法数据地址";
+		}else if(result.equals(ERROR_CODE_03)) {
+			return "不合法数据";
+		}else if(result.equals(ERROR_CODE_04)) {
+			return "从机设备故障";
+		}else if(result.equals(ERROR_CODE_05)) {
+			return "设备码不对";
+		}else if(result.equals(ERROR_CODE_06)) {
+			return "未知错误";
+		}
+    	return result;
+    }
+    
+    public static String parseFaultDesc(String errorCode) {
     	if (TextUtils.isEmpty(errorCode)) {
 			return errorCode;
 		}
