@@ -30,12 +30,14 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
     
     private List<BleSendCommandModel> mCommandQueue;
     
+    private List<BleSendCommandModel> mRepeatCommandList = new ArrayList<BleSendCommandModel>();
+    
     private Handler mHandler = new Handler();
     
     @Override
     protected void onBleConnectSuccess() {
 		super.onBleConnectSuccess();
-		ToastUtil.show(OBDFrezenDataActivity.this, "蓝牙连接成功，正在冻结数据，请稍候...");
+		ToastUtil.show(OBDFrezenDataActivity.this, "蓝牙连接成功，正在获取冻结数据，请稍候...");
 		final BleSendCommandModel sendCommandModel = findNextSendCommand();
         if (sendCommandModel != null){
             mHandler.postDelayed(new Runnable() {
@@ -53,6 +55,29 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
                 return model;
             }
         }
+        return null;
+    }
+    
+    private BleSendCommandModel findNextRepeatCommand(){
+        if (mRepeatCommandList == null || mRepeatCommandList.isEmpty()){
+            return null;
+        }
+        for (BleSendCommandModel model: mRepeatCommandList){
+            if (model.notSend()){
+                return model;
+            }
+        }
+
+        //如果已经遍历完了所有的待发队列，直接把待发队列设置成初始化状态，从头遍历.
+        for (BleSendCommandModel model: mRepeatCommandList){
+            model.setStatus(BleSendCommandModel.SendCmdStatus.STATUS_INIT);
+        }
+        for (BleSendCommandModel model: mRepeatCommandList){
+            if (model.notSend()){
+                return model;
+            }
+        }
+
         return null;
     }
     
@@ -122,10 +147,13 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         		mWaitDialog.dismiss();
         		mWaitDialog = null;
         	}
+        	mCommandQueue.clear();
+        	mRepeatCommandList.clear();
         	finish();
         	return;
         }else {
         	LogUtils.d(TAG, "未知指令读取返回");
+        	return;
         }
     	
     	mAdapter.notifyDataSetChanged();
@@ -135,19 +163,25 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         if (presendCmd != null){
             delayTime = presendCmd.getDelayTime();
         }
-        final BleSendCommandModel nextSendModel = findNextSendCommand();
+        BleSendCommandModel nextSendModel = findNextSendCommand();
+        if (nextSendModel == null){
+            nextSendModel = findNextRepeatCommand();
+            if (nextSendModel != null) {
+            	delayTime = nextSendModel.getDelayTime();
+			}
+        }
+        final BleSendCommandModel nextTrySendModel = nextSendModel;
 
-        if (nextSendModel != null) {
+        if (nextTrySendModel != null) {
         	LogUtils.d(TAG,"nextTrySendModel: " + nextSendModel.getCommand());
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    sendMessage(nextSendModel);
+                    sendMessage(nextTrySendModel);
                 }
             }, delayTime);
         }
     }
-    
     
     private void createCommandQueue(){
         mCommandQueue = new ArrayList<BleSendCommandModel>();
@@ -160,51 +194,57 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
                 BleCommandManager.Sender.COMMAND_SPEED,
                 1000);
         mCommandQueue.add(speedCommand);
+        BleSendCommandModel repeatCmdFirst = new BleSendCommandModel(speedCommand);
+        repeatCmdFirst.setDelayTime(repeatDelayTime);
+        mRepeatCommandList.add(repeatCmdFirst);
         
         BleSendCommandModel randCommand = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_RAND,
                 1000);
         mCommandQueue.add(randCommand);
+        mRepeatCommandList.add(new BleSendCommandModel(randCommand));
         
         BleSendCommandModel temptureCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_TEMPTURE,
                 1000);
         mCommandQueue.add(temptureCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(temptureCmd));
         
         BleSendCommandModel battaryVCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_BATTARY_V,
                 1000);
         mCommandQueue.add(battaryVCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(battaryVCmd));
         
         BleSendCommandModel xiqiTempCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_XIQI_TEMPTURE,
                 1000);
         mCommandQueue.add(xiqiTempCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(xiqiTempCmd));
         
         BleSendCommandModel jiqiguanPressCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS,
                 1000);
         mCommandQueue.add(jiqiguanPressCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(jiqiguanPressCmd));
         
         BleSendCommandModel chepaiVidCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_CHEPAI_VID,
                 1000);
         mCommandQueue.add(chepaiVidCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(chepaiVidCmd));
         
         BleSendCommandModel biaodingIdCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_BIAODING_ID,
                 1000);
         mCommandQueue.add(biaodingIdCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(biaodingIdCmd));
         
         BleSendCommandModel cvnCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_CVN,
                 1000);
         mCommandQueue.add(cvnCmd);
-        
-        BleSendCommandModel finishCmd = new BleSendCommandModel(
-                BleCommandManager.Sender.COMMAND_FINISH,
-                0);
-        mCommandQueue.add(finishCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(cvnCmd));
     }
     
     @Override

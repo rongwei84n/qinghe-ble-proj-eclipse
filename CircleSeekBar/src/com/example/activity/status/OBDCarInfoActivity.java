@@ -100,7 +100,7 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
         mCommandQueue = new ArrayList<BleSendCommandModel>();
         BleSendCommandModel readCarInfoCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_READ_CARINFO,
-                100);
+                2000);
         mCommandQueue.add(readCarInfoCmd);
         
         BleSendCommandModel carVidCmd = new BleSendCommandModel(

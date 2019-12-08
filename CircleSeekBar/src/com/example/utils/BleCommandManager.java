@@ -31,7 +31,7 @@ public class BleCommandManager {
         public static final String COMMAND_STANDARD_ID = "F03_2001" + CMD_ENDD_TAG;//标定识别ID
         
         //清除故障
-        public static final String COMMAND_CLEAR_ERROR = "F10_0001_3" + CMD_ENDD_TAG;
+        public static final String COMMAND_CLEAR_ERROR = "F10_0001_4" + CMD_ENDD_TAG;
         
         //冻结数据
         public static final String COMMAND_FREZEN_DATA = "F10_0001_2" + CMD_ENDD_TAG;

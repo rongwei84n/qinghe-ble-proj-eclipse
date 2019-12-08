@@ -3,7 +3,6 @@ package com.example.activity.status;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +32,7 @@ import java.util.List;
 public class OBDReadErrorActivity extends JdyBaseActivity {
 
     private ListView mListView;
-    private List<Pair<String, String>> mDataSource;
+    private List<ErrorDataModel> mDataSource;
     private MyFuctionsAdapter mAdapter;
 
 
@@ -94,24 +93,37 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         }
         return null;
     }
+    
+    private void updateDateSource(String key, String text1, String text2) {
+    	for (ErrorDataModel model : mDataSource) {
+			if (model.key.equals(key)) {
+				model.text1 = text1;
+				model.text2 = text2;
+				return;
+			}
+		}
+    	//还没有保存这个数据，添加
+    	ErrorDataModel model = new ErrorDataModel(key, text1, text2);
+    	mDataSource.add(model);
+    	mAdapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void onMessageReceive(String msg) {
     	super.onMessageReceive(msg);
         BleReceiveParsedModel receiveParsedModel = new BleReceiveParsedModel(msg);
         if (BleCommandManager.Sender.COMMAND_READ_ERROR_COUNT.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "收到读取命令数量返回");
             try{
                 errorCount = new BigDecimal(receiveParsedModel.getResultByIndex(0)).intValue();
             }catch (Exception e){
                 LogUtils.e(TAG, e);
             }
             if (receiveParsedModel.isResultSuccess()){
-            	mDataSource.add(new Pair<String, String>("故障个数: " + receiveParsedModel.getResultByIndex(0), 
-            			""));
+            	updateDateSource("故障个数", "故障个数: " + receiveParsedModel.getResultByIndex(0), "");
             }else {
-            	mDataSource.add(new Pair<String, String>("读取故障个数失败", ""));
+            	updateDateSource("故障个数", "读取故障个数失败", "");
             }
-            mAdapter.notifyDataSetChanged();
 
             LogUtils.i(TAG, "errorCount: " + errorCount);
             errorCount = errorCount > 10? 10:errorCount;
@@ -121,52 +133,58 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
                 switch (i){
                     case 1:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_1, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_1, 200);
                         break;
                     case 2:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_2, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_2, 200);
                         break;
                     case 3:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_3, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_3, 200);
                         break;
                     case 4:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_4, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_4, 200);
                         break;
                     case 5:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_5, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_5, 200);
                         break;
                     case 6:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_6, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_6, 200);
                         break;
                     case 7:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_7, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_7, 200);
                         break;
                     case 8:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_8, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_8, 200);
                         break;
                     case 9:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_9, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_9, 200);
                         break;
                     case 10:
                         composeCommand = new BleSendCommandModel(
-                                BleCommandManager.Sender.COMMAND_READ_ERROR_10, 0);
+                                BleCommandManager.Sender.COMMAND_READ_ERROR_10, 200);
                         break;
                 }
                 if (composeCommand != null){
                     mCommandQueue.add(composeCommand);
-                    mRepeatCommandList.add(new BleSendCommandModel(composeCommand));
+                    if (i == 1) {
+                    	BleSendCommandModel cmdfirst = new BleSendCommandModel(composeCommand);
+                    	cmdfirst.setDelayTime(repeatDelayTime);
+                    	mRepeatCommandList.add(cmdfirst);
+					}else {
+						mRepeatCommandList.add(new BleSendCommandModel(composeCommand));
+					}
                 }
             }
         }else if (BleCommandManager.Sender.COMMAND_START_READ_ERROR.contains(receiveParsedModel.getSendCmd())){
-
+        	LogUtils.d(TAG, "收到开始读取命令返回");
         }else if (BleCommandManager.Sender.COMMAND_READ_ERROR_1.contains(receiveParsedModel.getSendCmd()) ||
                   BleCommandManager.Sender.COMMAND_READ_ERROR_2.contains(receiveParsedModel.getSendCmd()) ||
                 BleCommandManager.Sender.COMMAND_READ_ERROR_3.contains(receiveParsedModel.getSendCmd()) ||
@@ -177,6 +195,7 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
                 BleCommandManager.Sender.COMMAND_READ_ERROR_8.contains(receiveParsedModel.getSendCmd()) ||
                 BleCommandManager.Sender.COMMAND_READ_ERROR_9.contains(receiveParsedModel.getSendCmd()) ||
                 BleCommandManager.Sender.COMMAND_READ_ERROR_10.contains(receiveParsedModel.getSendCmd())){
+        	LogUtils.d(TAG, "收到故障读取命令返回");
             if (receiveParsedModel.isResultSuccess()){
             	StringBuilder sbTitle = new StringBuilder();
             	sbTitle.append("故障码: ");
@@ -194,18 +213,23 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
 				}else {
 					sbValue.append(desc);
 				}
-                mDataSource.add(new Pair<String, String>(sbTitle.toString(), sbValue.toString()));
+            	updateDateSource("故障" + receiveParsedModel.getResultByIndex(0), sbTitle.toString(), sbValue.toString());
             }else {
-            	mDataSource.add(new Pair<String, String>("故障码读取错误: " + receiveParsedModel.getResultByIndex(0), 
-            			""));
+            	updateDateSource("故障" + receiveParsedModel.getResultByIndex(0), "故障码读取错误: " + receiveParsedModel.getResultByIndex(0), "");
             }
             mAdapter.notifyDataSetChanged();
         }else if(BleCommandManager.Sender.COMMAND_FINISH.contains(receiveParsedModel.getSendCmd())) {
+        	LogUtils.d(TAG, "收到结束命令返回");
         	if(mWaitDialog != null) {
         		mWaitDialog.dismiss();
         		mWaitDialog = null;
         	}
+        	mCommandQueue.clear();
+        	mRepeatCommandList.clear();
         	finish();
+        	return;
+        }else {
+        	LogUtils.d(TAG, "收到未知命令返回");
         	return;
         }
 
@@ -217,7 +241,9 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         BleSendCommandModel nextSendModel = findNextSendCommand();
         if (nextSendModel == null){
             nextSendModel = findNextRepeatCommand();
-            delayTime = repeatDelayTime;
+            if (nextSendModel != null) {
+            	delayTime = nextSendModel.getDelayTime();
+			}
         }
         final BleSendCommandModel nextTrySendModel = nextSendModel;
         if (nextTrySendModel != null) {
@@ -236,7 +262,7 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
 
         BleSendCommandModel startReadErrorCommand = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_START_READ_ERROR,
-                200);
+                2000);
         mCommandQueue.add(startReadErrorCommand);
         
         BleSendCommandModel totalErrorCommand = new BleSendCommandModel(
@@ -285,8 +311,8 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
     }
 
     private void initDataSource(){
-        mDataSource = new ArrayList<Pair<String, String>>();
-        mDataSource.add(new Pair<String, String>("正在读取故障信息.", ""));
+        mDataSource = new ArrayList<ErrorDataModel>();
+//        mDataSource.add(new ErrorDataModel("正在读取故障信息", "正在读取故障信息", ""));
     }
 
     private class MyFuctionsAdapter extends BaseAdapter {
@@ -318,12 +344,24 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
                         android.R.layout.simple_list_item_2, null);
             }
             TextView textView1 = (TextView) convertView.findViewById(android.R.id.text1);
-            textView1.setText(mDataSource.get(position).first);
+            textView1.setText(mDataSource.get(position).text1);
             
             TextView textView2 = (TextView) convertView.findViewById(android.R.id.text2);
-            textView2.setText(mDataSource.get(position).second);
+            textView2.setText(mDataSource.get(position).text2);
             
             return convertView;
         }
+    }
+    
+    public static class ErrorDataModel{
+    	public String key;
+    	public String text1;
+    	public String text2;
+    	
+    	public ErrorDataModel(String key, String text1, String text2) {
+    		this.key = key;
+    		this.text1 = text1;
+    		this.text2 = text2;
+    	}
     }
 }

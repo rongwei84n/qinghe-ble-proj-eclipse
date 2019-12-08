@@ -73,7 +73,8 @@
             app:startAngle="170"
             app:stripeMode="inner"
             app:stripeWidth="40dp"
-            app:sweepAngle="200"/>
+            app:sweepAngle="200"
+            android:visibility="gone"/>
 
         <com.example.views.DashboardView
             android:id="@+id/dbv_zhuansu"

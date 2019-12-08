@@ -27,6 +27,8 @@ public class OBDRealDataActivity extends JdyBaseActivity {
     private List<DataModel> mDataSource;
     private MyFuctionsAdapter mAdapter;
     private List<BleSendCommandModel> mCommandQueue;
+    private List<BleSendCommandModel> mRepeatCommandList = new ArrayList<BleSendCommandModel>();
+
     
     @Override
     protected void onBleConnectSuccess() {
@@ -58,6 +60,29 @@ public class OBDRealDataActivity extends JdyBaseActivity {
                 return model;
             }
         }
+        return null;
+    }
+    
+    private BleSendCommandModel findNextRepeatCommand(){
+        if (mRepeatCommandList == null || mRepeatCommandList.isEmpty()){
+            return null;
+        }
+        for (BleSendCommandModel model: mRepeatCommandList){
+            if (model.notSend()){
+                return model;
+            }
+        }
+
+        //如果已经遍历完了所有的待发队列，直接把待发队列设置成初始化状态，从头遍历.
+        for (BleSendCommandModel model: mRepeatCommandList){
+            model.setStatus(BleSendCommandModel.SendCmdStatus.STATUS_INIT);
+        }
+        for (BleSendCommandModel model: mRepeatCommandList){
+            if (model.notSend()){
+                return model;
+            }
+        }
+
         return null;
     }
     
@@ -116,10 +141,13 @@ public class OBDRealDataActivity extends JdyBaseActivity {
         		mWaitDialog.dismiss();
         		mWaitDialog = null;
         	}
+        	mCommandQueue.clear();
+        	mRepeatCommandList.clear();
         	finish();
         	return;
         }else {
         	LogUtils.d(TAG, "未知指令读取返回");
+        	return;
         }
 
         BleSendCommandModel presendCmd = findSendCmdByReceive(receiveParsedModel.getSendCmd());
@@ -128,10 +156,12 @@ public class OBDRealDataActivity extends JdyBaseActivity {
             delayTime = presendCmd.getDelayTime();
         }
         BleSendCommandModel nextSendModel = findNextSendCommand();
-//        if (nextSendModel == null){
-//            nextSendModel = findNextRepeatCommand();
-//            delayTime = repeatDelayTime;
-//        }
+        if (nextSendModel == null){
+            nextSendModel = findNextRepeatCommand();
+            if (nextSendModel != null) {
+            	delayTime = nextSendModel.getDelayTime();
+			}
+        }
         final BleSendCommandModel nextTrySendModel = nextSendModel;
         if (nextTrySendModel != null) {
         	LogUtils.d(TAG,"nextTrySendModel: " + nextTrySendModel.getCommand());
@@ -203,7 +233,7 @@ public class OBDRealDataActivity extends JdyBaseActivity {
         mCommandQueue = new ArrayList<BleSendCommandModel>();
         BleSendCommandModel startRealData = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_REAL_DATA,
-                1000);
+                2000);
         mCommandQueue.add(startRealData);
         
         BleSendCommandModel speedCommand = new BleSendCommandModel(
@@ -211,45 +241,57 @@ public class OBDRealDataActivity extends JdyBaseActivity {
                 1000);
         mCommandQueue.add(speedCommand);
         
+        BleSendCommandModel repeatFirst = new BleSendCommandModel(speedCommand);
+        repeatFirst.setDelayTime(repeatDelayTime);
+        mRepeatCommandList.add(repeatFirst);
+        
         BleSendCommandModel randCommand = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_RAND,
                 1000);
         mCommandQueue.add(randCommand);
+        mRepeatCommandList.add(new BleSendCommandModel(randCommand));
         
         BleSendCommandModel temptureCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_TEMPTURE,
                 1000);
         mCommandQueue.add(temptureCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(temptureCmd));
         
         BleSendCommandModel battaryVCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_BATTARY_V,
                 1000);
         mCommandQueue.add(battaryVCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(battaryVCmd));
         
         BleSendCommandModel xiqiTempCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_XIQI_TEMPTURE,
                 1000);
         mCommandQueue.add(xiqiTempCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(xiqiTempCmd));
         
         BleSendCommandModel jiqiguanPressCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS,
                 1000);
         mCommandQueue.add(jiqiguanPressCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(jiqiguanPressCmd));
         
         BleSendCommandModel chepaiVidCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_CHEPAI_VID,
                 1000);
         mCommandQueue.add(chepaiVidCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(chepaiVidCmd));
         
         BleSendCommandModel biaodingIdCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_BIAODING_ID,
                 1000);
         mCommandQueue.add(biaodingIdCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(biaodingIdCmd));
         
         BleSendCommandModel cvnCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_CVN,
                 1000);
         mCommandQueue.add(cvnCmd);
+        mRepeatCommandList.add(new BleSendCommandModel(cvnCmd));
     }
 
     private class MyFuctionsAdapter extends BaseAdapter {

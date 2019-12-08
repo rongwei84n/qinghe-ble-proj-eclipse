@@ -77,6 +77,8 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         		mWaitDialog.dismiss();
         		mWaitDialog = null;
         	}
+        	mCommandQueue.clear();
+        	mRepeatCommandList.clear();
         	finish();
         	return;
         }else {
@@ -135,22 +137,18 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
     private BleSendCommandModel findNextSendCommand(){
         for (BleSendCommandModel model: mCommandQueue){
             if (model.notSend()){
-            	LogUtils.d(TAG, "findNextSendCommand");
                 return model;
             }
         }
-        LogUtils.d(TAG, "not findNextSendCommand");
         return null;
     }
     
     private BleSendCommandModel findNextRepeatCommand(){
         if (mRepeatCommandList == null || mRepeatCommandList.isEmpty()){
-        	LogUtils.d(TAG, "findNextRepeatCommand 1");
             return null;
         }
         for (BleSendCommandModel model: mRepeatCommandList){
             if (model.notSend()){
-            	LogUtils.d(TAG, "findNextRepeatCommand 2");
                 return model;
             }
         }
@@ -159,15 +157,12 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         for (BleSendCommandModel model: mRepeatCommandList){
             model.setStatus(BleSendCommandModel.SendCmdStatus.STATUS_INIT);
         }
-        LogUtils.d(TAG, "findNextRepeatCommand 3");
         for (BleSendCommandModel model: mRepeatCommandList){
             if (model.notSend()){
-            	LogUtils.d(TAG, "findNextRepeatCommand 4");
                 return model;
             }
         }
 
-        LogUtils.d(TAG, "findNextRepeatCommand 5");
         return null;
     }
 
@@ -218,7 +213,7 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         mCommandQueue = new ArrayList<BleSendCommandModel>();
         BleSendCommandModel startRealData = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_REAL_DATA,
-                1000);
+                2000);
         mCommandQueue.add(startRealData);
         
         BleSendCommandModel speedCommand = new BleSendCommandModel(
