@@ -9,7 +9,7 @@
         android:id="@+id/pic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/custom_meike"
+        android:src="@drawable/app_home"
         android:scaleType="centerInside"
         android:paddingTop="150dp"
         android:paddingRight="10dp"
