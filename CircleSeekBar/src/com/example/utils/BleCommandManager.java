@@ -3,7 +3,7 @@ package com.example.utils;
 /** Ble命令的封装类 */
 public class BleCommandManager {
 
-    public static final String CMD_ENDD_TAG = "\\r";
+    public static final String CMD_ENDD_TAG = "\\r\\n";//
 
     public static class Sender{
         /** 写设备号 */

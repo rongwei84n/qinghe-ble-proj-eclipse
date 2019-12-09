@@ -53,18 +53,19 @@
                 android:layout_toLeftOf="@id/tv_v"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="正在获取油耗..."
+                android:text="正在获取车速..."
                 android:textColor="@color/white"/>
         </RelativeLayout>
 
         <com.example.views.DashboardView
-            android:id="@+id/dbv_licheng"
+            android:id="@+id/dbv_chesu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
             app:bigSliceCount="12"
             app:headerRadius="50dp"
-            app:headerTitle="km/h"
+            app:headerTitle="车速"
             app:maxValue="50"
             app:measureTextSize="10sp"
             app:radius="110dp"
@@ -73,8 +74,7 @@
             app:startAngle="170"
             app:stripeMode="inner"
             app:stripeWidth="40dp"
-            app:sweepAngle="200"
-            android:visibility="gone"/>
+            app:sweepAngle="200"/>
 
         <com.example.views.DashboardView
             android:id="@+id/dbv_zhuansu"
@@ -94,46 +94,5 @@
             app:stripeMode="inner"
             app:stripeWidth="40dp"
             app:sweepAngle="200"/>
-
-    <!--    <com.example.views.CicleView-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        app:circle_color="blue"-->
-    <!--        android:visibility="gone"/>-->
-    <!--    <com.example.views.MeterView-->
-    <!--        android:layout_width="200dp"-->
-    <!--        android:layout_height="200dp"-->
-    <!--        android:visibility="gone"/>-->
-
-    <!--    <ScrollView-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content">-->
-
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:orientation="vertical">-->
-
-    <!--            <TextView-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="200dp"-->
-    <!--                android:background="#88888888"-->
-    <!--                android:gravity="center"-->
-    <!--                android:text="数据显示区1" />-->
-
-    <!--            <com.github.mikephil.charting.charts.PieChart-->
-    <!--                android:id="@+id/pie_chart"-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="300dp" />-->
-
-    <!--            <TextView-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="200dp"-->
-    <!--                android:background="#88888888"-->
-    <!--                android:gravity="center"-->
-    <!--                android:text="数据显示区2" />-->
-    <!--        </LinearLayout>-->
-    <!--    </ScrollView>-->
-
     </LinearLayout>
 </ScrollView>

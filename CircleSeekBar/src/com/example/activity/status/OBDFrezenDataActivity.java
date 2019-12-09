@@ -124,7 +124,7 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         	LogUtils.d(TAG, "发动机温度读取返回");
         	String temp = receiveParsedModel.getResultByIndex(0);
         	if (temp != null) {
-        		temp = temp.replace("C", "").replace("c", "").concat("摄氏度");
+        		temp = temp.replace("C", "").replace("c", "").concat("℃");
 			}
             updateDateSource("发动机温度", temp);
         }else if (BleCommandManager.Sender.COMMAND_BATTARY_V.contains(receiveParsedModel.getSendCmd())){
@@ -134,7 +134,7 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         	LogUtils.d(TAG, "吸气温度读取返回");
         	String temp = receiveParsedModel.getResultByIndex(0);
         	if (temp != null) {
-        		temp = temp.replace("C", "").replace("c", "").concat("摄氏度");
+        		temp = temp.replace("C", "").replace("c", "").concat("℃");
 			}
             updateDateSource("吸气温度", temp);
         }else if (BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS.contains(receiveParsedModel.getSendCmd())){

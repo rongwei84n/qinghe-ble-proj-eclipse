@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OBDYiBiaoActivity extends JdyBaseActivity {
-    private DashboardView mDashboardViewLiCheng;
+    private DashboardView mDashboardViewChesu;
     private DashboardView mDhZhuansu;
     private List<BleSendCommandModel> mCommandQueue;
     private List<BleSendCommandModel> mRepeatCommandList = new ArrayList<BleSendCommandModel>();
@@ -46,6 +46,22 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         	LogUtils.d(TAG, "仪表盘实时数据返回");
         }else if (BleCommandManager.Sender.COMMAND_SPEED.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "车速读取返回" + receiveParsedModel.getResultByIndex(0));
+        	mTvLh.setText("车速：" + receiveParsedModel.getResultByIndex(0));
+        	String pureData = receiveParsedModel.getResultByIndex(0);
+        	if (!TextUtils.isEmpty(pureData)) {
+        		pureData = pureData.replace("km/h", "");
+        		try {
+					int pureDataInt = Integer.parseInt(pureData);
+					mDashboardViewChesu.mButtonCenterStr = receiveParsedModel.getResultByIndex(0);
+					if (pureDataInt < 2000) {
+						mDashboardViewChesu.setMaxValue(2000);
+					}else {
+						mDashboardViewChesu.setMaxValue(pureDataInt + 1500);
+					}
+					mDashboardViewChesu.setRealTimeValue(pureDataInt);
+				} catch (Exception e) {
+				}
+			}
         }else if (BleCommandManager.Sender.COMMAND_RAND.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "发动机转速读取返回" );
         	mTvRandSpeed.setText("发动机转速：" + receiveParsedModel.getResultByIndex(0));
@@ -68,7 +84,7 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         	LogUtils.d(TAG, "发动机温度读取返回");
         	String temp = receiveParsedModel.getResultByIndex(0);
         	if (temp != null) {
-        		temp = temp.replace("C", "").replace("c", "").concat("摄氏度");
+        		temp = temp.replace("C", "").replace("c", "").concat("℃");
 			}
         	mTvTempture.setText("发动机温度：" + temp);
         }else if (BleCommandManager.Sender.COMMAND_BATTARY_V.contains(receiveParsedModel.getSendCmd())){
@@ -178,7 +194,7 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
     public void afterInitView() {
     	super.afterInitView();
         mTvTitle.setText("仪表");
-        mDashboardViewLiCheng = (DashboardView) findViewById(R.id.dbv_licheng);
+        mDashboardViewChesu = (DashboardView) findViewById(R.id.dbv_chesu);
         mDhZhuansu = (DashboardView) findViewById(R.id.dbv_zhuansu);
         mDhZhuansu.setHeaderTitle("转速");
         mDhZhuansu.setAnimEnable(true);
@@ -191,8 +207,8 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         List<HighlightCR> highlight2 = new ArrayList<HighlightCR>();
         highlight2.add(new HighlightCR(170, 140, Color.BLUE));
         highlight2.add(new HighlightCR(310, 60, Color.GREEN));
-        mDashboardViewLiCheng.setStripeHighlightColorAndRange(highlight2);
-        mDashboardViewLiCheng.mButtonCenterStr = "86%";
+        mDashboardViewChesu.setStripeHighlightColorAndRange(highlight2);
+        mDashboardViewChesu.mButtonCenterStr = "86%";
         bindBleService();
     }
     
