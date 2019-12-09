@@ -2,6 +2,7 @@ package com.example.activity.status;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -39,8 +40,6 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
     private List<BleSendCommandModel> mCommandQueue;
 
     private List<BleSendCommandModel> mRepeatCommandList = new ArrayList<BleSendCommandModel>();
-
-    private Handler mHandler = new Handler();
 
     private int errorCount = 0;
 
@@ -248,12 +247,10 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         final BleSendCommandModel nextTrySendModel = nextSendModel;
         if (nextTrySendModel != null) {
         	LogUtils.d(TAG,"nextTrySendModel: " + nextTrySendModel.getCommand());
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    sendMessage(nextTrySendModel);
-                }
-            }, delayTime);
+        	mMainHandler.removeMessages(MESSAGE_SEND_CMD);
+        	Message handleMsg = mMainHandler.obtainMessage(MESSAGE_SEND_CMD);
+        	handleMsg.obj = nextTrySendModel;
+        	mMainHandler.sendMessageDelayed(handleMsg, delayTime);
         }
     }
 

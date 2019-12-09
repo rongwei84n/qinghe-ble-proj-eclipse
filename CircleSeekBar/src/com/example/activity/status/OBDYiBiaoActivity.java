@@ -3,6 +3,7 @@ package com.example.activity.status;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.widget.TextView;
@@ -30,8 +31,6 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
     private TextView mTvTempture;//温度
     private TextView mTvDianya; //电压
     private TextView mTvLh;//LH  //油耗
-    
-    private Handler mHandler = new Handler();
     
     public void beforeInitLayout() {
 		super.beforeInitLayout();
@@ -67,7 +66,7 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         	mTvRandSpeed.setText("发动机转速：" + receiveParsedModel.getResultByIndex(0));
         	String pureData = receiveParsedModel.getResultByIndex(0);
         	if (!TextUtils.isEmpty(pureData)) {
-        		pureData = pureData.replace("rpmi", "");
+        		pureData = pureData.replace("rpmi", "").replace("rpmin", "");
         		try {
 					int pureDataInt = Integer.parseInt(pureData);
 					mDhZhuansu.mButtonCenterStr = receiveParsedModel.getResultByIndex(0);
@@ -120,12 +119,10 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         final BleSendCommandModel nextTrySendModel = nextSendModel;
         if (nextTrySendModel != null) {
         	LogUtils.d(TAG,"nextTrySendModel: " + nextTrySendModel.getCommand() + " delay: " + delayTime);
-        	mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    sendMessage(nextTrySendModel);
-                }
-            }, delayTime);
+        	mMainHandler.removeMessages(MESSAGE_SEND_CMD);
+        	Message handleMsg = mMainHandler.obtainMessage(MESSAGE_SEND_CMD);
+        	handleMsg.obj = nextTrySendModel;
+        	mMainHandler.sendMessageDelayed(handleMsg, delayTime);
         }
     }
     
@@ -135,7 +132,7 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         ToastUtil.show(OBDYiBiaoActivity.this, "蓝牙连接成功，正在读取数信息，请稍候...");
 		final BleSendCommandModel sendCommandModel = findNextSendCommand();
         if (sendCommandModel != null){
-        	mHandler.postDelayed(new Runnable() {
+        	mMainHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					sendMessage(sendCommandModel);
@@ -260,30 +257,5 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
                 1000);
         mCommandQueue.add(battaryVCmd);
         mRepeatCommandList.add(new BleSendCommandModel(battaryVCmd));
-        
-//        BleSendCommandModel xiqiTempCmd = new BleSendCommandModel(
-//                BleCommandManager.Sender.COMMAND_XIQI_TEMPTURE,
-//                1000);
-//        mCommandQueue.add(xiqiTempCmd);
-        
-//        BleSendCommandModel jiqiguanPressCmd = new BleSendCommandModel(
-//                BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS,
-//                1000);
-//        mCommandQueue.add(jiqiguanPressCmd);
-        
-//        BleSendCommandModel chepaiVidCmd = new BleSendCommandModel(
-//                BleCommandManager.Sender.COMMAND_CHEPAI_VID,
-//                1000);
-//        mCommandQueue.add(chepaiVidCmd);
-//        
-//        BleSendCommandModel biaodingIdCmd = new BleSendCommandModel(
-//                BleCommandManager.Sender.COMMAND_BIAODING_ID,
-//                1000);
-//        mCommandQueue.add(biaodingIdCmd);
-//        
-//        BleSendCommandModel cvnCmd = new BleSendCommandModel(
-//                BleCommandManager.Sender.COMMAND_CVN,
-//                1000);
-//        mCommandQueue.add(cvnCmd);
     }
 }

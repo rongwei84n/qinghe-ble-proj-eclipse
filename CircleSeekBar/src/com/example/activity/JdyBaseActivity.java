@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -50,6 +51,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.lee.circleseekbar.R;
+import com.example.activity.status.OBDYiBiaoActivity;
 import com.example.ble.BluetoothLeService;
 import com.example.model.BleSendCommandModel;
 import com.example.utils.ApplicationStaticValues;
@@ -60,6 +62,8 @@ import com.example.utils.ToastUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * For a given BLE device, this Activity provides the user interface to connect, display data,
@@ -69,8 +73,21 @@ import java.util.TimerTask;
  */
 public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener{
     protected int repeatDelayTime = 5000;
+    
+    protected static final int MESSAGE_SEND_CMD = 100;
 
-    protected Handler mMainHandler = new Handler();
+    protected Handler mMainHandler = new Handler() {
+    	public void handleMessage(Message msg) {
+    		switch (msg.what) {
+			case MESSAGE_SEND_CMD:
+				BleSendCommandModel model = (BleSendCommandModel) msg.obj;
+				JdyBaseActivity.this.sendMessage(model);
+				break;
+			}
+    	};
+    };
+    
+    protected StringBuffer mSb = new StringBuffer();
     
     protected AlertDialog mWaitDialog;
 
@@ -109,6 +126,8 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     //----改后，同一不用16进制发送和接受
     boolean notSendHex = true;//不用16进制发送
     boolean rx_hex = false;//不用16进制接收
+    
+    private boolean running = true;
 
     protected BluetoothAdapter mBluetoothAdapter;
 
@@ -331,6 +350,28 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     public void beforeInitLayout() {
         super.beforeInitLayout();
         openBlueTooth();
+        
+        Thread readThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					while(running) {
+						final String value = mPaddingQueue.take();
+						if (!TextUtils.isEmpty(value)) {
+							mMainHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									onMessageReceive(value);
+								}
+							});
+						}
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+        readThread.start();
     }
 
     @Override
@@ -641,6 +682,7 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     protected void onDestroy() {
         super.onDestroy();
         LogUtils.d(TAG, "onDestroy");
+        running = false;
 //        unbindService(mServiceConnection);
 //        mBluetoothLeService.disconnect();
 //        mBluetoothLeService = null;
@@ -688,7 +730,11 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     
     String da="";
     int len_g = 0;
-
+    
+    public static final String BLE_END_TAG = "~";
+    
+    private BlockingQueue<String> mPaddingQueue = new ArrayBlockingQueue<String>(1000);
+    
     //接收FFE1串口透传数据通道数据
     private void displayData( byte[] data1 ) {
     	LogUtils.d(TAG, "displayData rx_hex: " + rx_hex);
@@ -715,14 +761,29 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     			sbValues.append(tempResult) ;
     			rx_data_id_1.setText( sbValues.toString() );
     		}
-    		final String postStr = tempResult.replace("\r", "").replace("\n", "");
+    		final String postStr = tempResult.replace(" ", "").replace("\n", "").replace("\r", BLE_END_TAG);
     		LogUtils.w(TAG, "receive ble msg: " + postStr);
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onMessageReceive(postStr);
-                }
-            });
+    		mSb.append(postStr);
+        	String doingStr = mSb.toString();
+        	
+        	String[] arrays = doingStr.split(BLE_END_TAG);
+        	if (arrays == null || arrays.length == 0) {
+    			return;
+    		}
+        	LogUtils.d(TAG, "doingStr: " + doingStr + " lenth: " + arrays.length 
+        			+ " thread: " + Thread.currentThread().getName());
+        	for (int i = 0; i < arrays.length; i++) {
+        		final String ss = arrays[i];
+        		mPaddingQueue.add(ss);
+    		}
+        	if (doingStr.endsWith(BLE_END_TAG)) {
+        		mSb.setLength(0);
+			}else {
+				mSb.setLength(0);
+				mSb.append(arrays[arrays.length - 1]);
+			}
+    		
+            
 
     		len_g += data1.length;
     		

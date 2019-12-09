@@ -2,6 +2,7 @@ package com.example.activity.status;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,15 +33,13 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
     
     private List<BleSendCommandModel> mRepeatCommandList = new ArrayList<BleSendCommandModel>();
     
-    private Handler mHandler = new Handler();
-    
     @Override
     protected void onBleConnectSuccess() {
 		super.onBleConnectSuccess();
 		ToastUtil.show(OBDFrezenDataActivity.this, "蓝牙连接成功，正在获取冻结数据，请稍候...");
 		final BleSendCommandModel sendCommandModel = findNextSendCommand();
         if (sendCommandModel != null){
-            mHandler.postDelayed(new Runnable() {
+            mMainHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					sendMessage(sendCommandModel);
@@ -140,15 +139,6 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         }else if (BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS.contains(receiveParsedModel.getSendCmd())){
         	LogUtils.d(TAG, "进气管压力读取返回");
             updateDateSource("进气管压力", receiveParsedModel.getResultByIndex(0));
-        }else if (BleCommandManager.Sender.COMMAND_CHEPAI_VID.contains(receiveParsedModel.getSendCmd())){
-        	LogUtils.d(TAG, "车牌识别号VID读取返回");
-            updateDateSource("车辆识别号VID", receiveParsedModel.getResultByIndex(0));
-        }else if (BleCommandManager.Sender.COMMAND_BIAODING_ID.contains(receiveParsedModel.getSendCmd())){
-        	LogUtils.d(TAG, "标定识别ID读取返回");
-            updateDateSource("标定识别ID", receiveParsedModel.getResultByIndex(0));
-        }else if (BleCommandManager.Sender.COMMAND_CVN.contains(receiveParsedModel.getSendCmd())){
-        	LogUtils.d(TAG, "校准核查码读取返回");
-            updateDateSource("校准核查码(CVN)", receiveParsedModel.getResultByIndex(0));
         }else if(BleCommandManager.Sender.COMMAND_FINISH.contains(receiveParsedModel.getSendCmd())) {
         	LogUtils.d(TAG, "结束指令读取返回");
         	if(mWaitDialog != null) {
@@ -182,12 +172,10 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
 
         if (nextTrySendModel != null) {
         	LogUtils.d(TAG,"nextTrySendModel: " + nextSendModel.getCommand());
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    sendMessage(nextTrySendModel);
-                }
-            }, delayTime);
+        	mMainHandler.removeMessages(MESSAGE_SEND_CMD);
+        	Message handleMsg = mMainHandler.obtainMessage(MESSAGE_SEND_CMD);
+        	handleMsg.obj = nextTrySendModel;
+        	mMainHandler.sendMessageDelayed(handleMsg, delayTime);
         }
     }
     
@@ -235,24 +223,6 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
                 1000);
         mCommandQueue.add(jiqiguanPressCmd);
         mRepeatCommandList.add(new BleSendCommandModel(jiqiguanPressCmd));
-        
-        BleSendCommandModel chepaiVidCmd = new BleSendCommandModel(
-                BleCommandManager.Sender.COMMAND_CHEPAI_VID,
-                1000);
-        mCommandQueue.add(chepaiVidCmd);
-        mRepeatCommandList.add(new BleSendCommandModel(chepaiVidCmd));
-        
-        BleSendCommandModel biaodingIdCmd = new BleSendCommandModel(
-                BleCommandManager.Sender.COMMAND_BIAODING_ID,
-                1000);
-        mCommandQueue.add(biaodingIdCmd);
-        mRepeatCommandList.add(new BleSendCommandModel(biaodingIdCmd));
-        
-        BleSendCommandModel cvnCmd = new BleSendCommandModel(
-                BleCommandManager.Sender.COMMAND_CVN,
-                1000);
-        mCommandQueue.add(cvnCmd);
-        mRepeatCommandList.add(new BleSendCommandModel(cvnCmd));
     }
     
     @Override
