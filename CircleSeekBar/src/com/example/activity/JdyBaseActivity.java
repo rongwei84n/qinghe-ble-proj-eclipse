@@ -767,23 +767,21 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
         	String doingStr = mSb.toString();
         	
         	String[] arrays = doingStr.split(BLE_END_TAG);
-        	if (arrays == null || arrays.length == 0) {
-    			return;
+        	if (arrays != null && arrays.length > 0) {
+        		LogUtils.d(TAG, "doingStr: " + doingStr + " lenth: " + arrays.length 
+            			+ " thread: " + Thread.currentThread().getName());
+            	for (int i = 0; i < arrays.length; i++) {
+            		final String ss = arrays[i];
+            		mPaddingQueue.add(ss);
+        		}
+            	if (doingStr.endsWith(BLE_END_TAG)) {
+            		mSb.setLength(0);
+    			}else {
+    				mSb.setLength(0);
+    				mSb.append(arrays[arrays.length - 1]);
+    			}
     		}
-        	LogUtils.d(TAG, "doingStr: " + doingStr + " lenth: " + arrays.length 
-        			+ " thread: " + Thread.currentThread().getName());
-        	for (int i = 0; i < arrays.length; i++) {
-        		final String ss = arrays[i];
-        		mPaddingQueue.add(ss);
-    		}
-        	if (doingStr.endsWith(BLE_END_TAG)) {
-        		mSb.setLength(0);
-			}else {
-				mSb.setLength(0);
-				mSb.append(arrays[arrays.length - 1]);
-			}
-    		
-            
+        	
 
     		len_g += data1.length;
     		
