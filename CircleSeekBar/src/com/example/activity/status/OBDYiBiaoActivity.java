@@ -234,7 +234,7 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         
         BleSendCommandModel speedCommand = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_SPEED,
-                1000);
+                100);
         mCommandQueue.add(speedCommand);
         BleSendCommandModel rpfirst = new BleSendCommandModel(speedCommand);
         rpfirst.setDelayTime(repeatDelayTime);
@@ -242,19 +242,19 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         
         BleSendCommandModel randCommand = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_RAND,
-                1000);
+                100);
         mCommandQueue.add(randCommand);
         mRepeatCommandList.add(new BleSendCommandModel(randCommand));
         
         BleSendCommandModel temptureCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_TEMPTURE,
-                1000);
+                100);
         mCommandQueue.add(temptureCmd);
         mRepeatCommandList.add(new BleSendCommandModel(temptureCmd));
         
         BleSendCommandModel battaryVCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_BATTARY_V,
-                1000);
+                100);
         mCommandQueue.add(battaryVCmd);
         mRepeatCommandList.add(new BleSendCommandModel(battaryVCmd));
     }

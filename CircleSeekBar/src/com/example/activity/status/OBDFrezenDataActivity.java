@@ -183,12 +183,12 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         mCommandQueue = new ArrayList<BleSendCommandModel>();
         BleSendCommandModel frezenCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_FREZEN_DATA,
-                100);
+                500);
         mCommandQueue.add(frezenCmd);
         
         BleSendCommandModel speedCommand = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_SPEED,
-                1000);
+                100);
         mCommandQueue.add(speedCommand);
         BleSendCommandModel repeatCmdFirst = new BleSendCommandModel(speedCommand);
         repeatCmdFirst.setDelayTime(repeatDelayTime);
@@ -196,31 +196,31 @@ public class OBDFrezenDataActivity extends JdyBaseActivity {
         
         BleSendCommandModel randCommand = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_RAND,
-                1000);
+                100);
         mCommandQueue.add(randCommand);
         mRepeatCommandList.add(new BleSendCommandModel(randCommand));
         
         BleSendCommandModel temptureCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_TEMPTURE,
-                1000);
+                100);
         mCommandQueue.add(temptureCmd);
         mRepeatCommandList.add(new BleSendCommandModel(temptureCmd));
         
         BleSendCommandModel battaryVCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_BATTARY_V,
-                1000);
+                100);
         mCommandQueue.add(battaryVCmd);
         mRepeatCommandList.add(new BleSendCommandModel(battaryVCmd));
         
         BleSendCommandModel xiqiTempCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_XIQI_TEMPTURE,
-                1000);
+                100);
         mCommandQueue.add(xiqiTempCmd);
         mRepeatCommandList.add(new BleSendCommandModel(xiqiTempCmd));
         
         BleSendCommandModel jiqiguanPressCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_JINQIGUAN_PRESS,
-                1000);
+                100);
         mCommandQueue.add(jiqiguanPressCmd);
         mRepeatCommandList.add(new BleSendCommandModel(jiqiguanPressCmd));
     }
