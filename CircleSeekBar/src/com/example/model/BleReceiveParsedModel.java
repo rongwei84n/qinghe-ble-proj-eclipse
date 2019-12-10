@@ -176,7 +176,7 @@ public class BleReceiveParsedModel {
     	if (mapping == null) {
 			return errorCode;
 		}
-    	return mapping.faultDevice + "_" + mapping.faultDesc;
+    	return "故障设备：" + mapping.faultDevice + "\n故障描述：" + mapping.faultDesc;
     }
     
     public static class ErrorMapping{

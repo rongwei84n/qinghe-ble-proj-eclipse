@@ -1,7 +1,6 @@
 package com.example.activity.status;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -205,7 +204,6 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
 				}
             	
             	StringBuilder sbValue = new StringBuilder();
-            	sbValue.append("故障描述:");
             	String desc = BleReceiveParsedModel.parseFaultDesc(receiveParsedModel.getResultByIndex(0));
             	if (TextUtils.equals(desc, receiveParsedModel.getResultByIndex(0))) {
             		sbValue.append("无");
@@ -335,8 +333,6 @@ public class OBDReadErrorActivity extends JdyBaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null){
-//                convertView = LayoutInflater.from(OBDReadErrorActivity.this).inflate(
-//                        R.layout.listitem_common, null);
                 convertView = LayoutInflater.from(OBDReadErrorActivity.this).inflate(
                         android.R.layout.simple_list_item_2, null);
             }
