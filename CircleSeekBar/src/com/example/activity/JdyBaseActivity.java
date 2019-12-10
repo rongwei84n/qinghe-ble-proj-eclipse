@@ -140,8 +140,13 @@ public class JdyBaseActivity extends BaseActivity implements SeekBar.OnSeekBarCh
     	LogUtils.d(TAG, "sendMessage: " + msg + " connect_status_bit: " + connect_status_bit
     			+ " mConnected: " + mConnected + " notSendHex: " + notSendHex);
         if(connect_status_bit && mConnected){
-        	tx_count += mBluetoothLeService.txxx(msg, notSendHex);//发送字符串数据
-            mTvSendCount.setText("发送数据：" + tx_count);
+        	try {
+        		tx_count += mBluetoothLeService.txxx(msg, notSendHex);//发送字符串数据
+                mTvSendCount.setText("发送数据：" + tx_count);
+			} catch (Exception e) {
+				LogUtils.e(TAG, e);
+				ToastUtil.show(this, "蓝牙连接失败，请重试");
+			}
             //mBluetoothLeService.txxx( tx_string,false );//发送HEX数据
         }else{
             Toast toast = Toast.makeText(JdyBaseActivity.this, "设备没有连接，正在重连...", Toast.LENGTH_SHORT);

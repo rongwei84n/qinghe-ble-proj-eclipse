@@ -229,7 +229,7 @@ public class OBDYiBiaoActivity extends JdyBaseActivity {
         mCommandQueue = new ArrayList<BleSendCommandModel>();
         BleSendCommandModel startRealData = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_REAL_DATA,
-                2000);
+                1000);
         mCommandQueue.add(startRealData);
         
         BleSendCommandModel speedCommand = new BleSendCommandModel(
