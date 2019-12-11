@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 //import com.example.jdy_type.Get_type;
 import com.example.jdy_type.JDY_type;
+import com.example.listener.JdyDeviceListener;
 import com.example.utils.LogUtils;
 import com.lee.circleseekbar.R;
 
@@ -28,6 +29,8 @@ public class DeviceListAdapter extends Activity
 {
 	private static final String TAG = "DeviceListAdapter";
 	int list_select_index = 0;
+	
+	public JdyDeviceListener mJdyDeviceListener;
 	
 //	Get_type mGet_type;
   private	DeviceListAdapter1 list_cell_0;
@@ -328,7 +331,7 @@ public class DeviceListAdapter extends Activity
 	{
 		list_cell_0.clear();
 	}
-	public void scan_jdy_ble( Boolean p )//ɨ��BLE����
+	public void scan_jdy_ble( Boolean p )
 	{
 		if( p )
 		{
@@ -399,6 +402,11 @@ public class DeviceListAdapter extends Activity
 		public void addDevice(BluetoothDevice device,byte[] scanRecord,Integer  RSSI,JDY_type type ) 
 		{
 			ip = 1;
+			if (mJdyDeviceListener != null) {
+				if (type == JDY_type.JDY) {
+					mJdyDeviceListener.onDeviceFound(device.getName(), device.getAddress());
+				}
+			}
 			if (!dev_ble.contains(device)) 
 			{
 				dev_ble.add(device);

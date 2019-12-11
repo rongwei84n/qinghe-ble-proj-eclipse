@@ -8,11 +8,11 @@
         layout="@layout/include_common_header" />
     <include layout="@layout/include_jdy_base_common"
         android:visibility="gone"/>
-    <Button
-        android:id="@+id/btn_go_taobao"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="跳转淘宝原来的程序"/>
+    <ListView
+        android:id="@+id/lv_bleList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:layout_width="match_parent"
