@@ -92,6 +92,7 @@ public class OBDRealDataActivity extends JdyBaseActivity {
     	for (DataModel model : mDataSource) {
 			if (model.title.equals(title)) {
 				model.value = value;
+				mAdapter.notifyDataSetChanged();
 				return;
 			}
 		}
