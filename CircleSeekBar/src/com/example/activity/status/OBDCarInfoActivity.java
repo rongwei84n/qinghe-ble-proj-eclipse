@@ -73,7 +73,7 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
     			ToastUtil.show(OBDCarInfoActivity.this, "读取车辆信息失败");
     		}
     	}else if(BleCommandManager.Sender.COMMAND_CAR_VID.contains(receiveParsedModel.getSendCmd())) {
-			String result = receiveParsedModel.getResultByIndex(0);
+    		String result = receiveParsedModel.getResultByIndex(0);
     		if (!TextUtils.isEmpty(result)) {
 				try {
 					//尝试转化成16进制
@@ -87,14 +87,14 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
 			updateDateSource("标定识别号", receiveParsedModel.getResultByIndex(0));
     	}else if(BleCommandManager.Sender.COMMAND_CVN.contains(receiveParsedModel.getSendCmd())) {
     		String result = receiveParsedModel.getResultByIndex(0);
-    		if (!TextUtils.isEmpty(result)) {
-				try {
-					//尝试转化成16进制
-					Integer resultInt = Integer.parseInt(result);
-					result = Integer.toBinaryString(resultInt);
-				} catch (Exception e) {
-				}
-			}
+//    		if (!TextUtils.isEmpty(result)) {
+//				try {
+//					//尝试转化成16进制
+//					Integer resultInt = Integer.parseInt(result);
+//					result = Integer.toBinaryString(resultInt);
+//				} catch (Exception e) {
+//				}
+//			}
 			updateDateSource("校准核查码(CVN)", result);
     	}
     	
@@ -119,7 +119,7 @@ public class OBDCarInfoActivity extends JdyBaseActivity {
         mCommandQueue = new ArrayList<BleSendCommandModel>();
         BleSendCommandModel readCarInfoCmd = new BleSendCommandModel(
                 BleCommandManager.Sender.COMMAND_READ_CARINFO,
-                2000);
+                4000);
         mCommandQueue.add(readCarInfoCmd);
         
         BleSendCommandModel carVidCmd = new BleSendCommandModel(
